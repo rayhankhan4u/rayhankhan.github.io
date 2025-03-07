@@ -74,21 +74,19 @@
     <script src="https://whephiwums.com/sdk.js" data-zone="9042229" data-sdk="show_9042229"></script>
 
     <script>
-        // Global variables
-        var watchedAds = 0;
-        var balanceUSD = 0;
-        var balanceBDT = 0;
-        var progress = 0;
-
         // Constants
         var usdPerAd = 0.005; // $0.005 per ad watched
         var bdtPerAd = 0.50;  // ৳0.50 per ad watched
         var maxAds = 200; // Number of ads required for full balance (100% progress)
 
+        // Retrieve stored data from localStorage
+        var watchedAds = parseInt(localStorage.getItem("watchedAds")) || 0;
+        var balanceUSD = parseFloat(localStorage.getItem("balanceUSD")) || 0;
+        var balanceBDT = parseFloat(localStorage.getItem("balanceBDT")) || 0;
+
         // Function to update the progress
         function updateProgress() {
             var percentage = (watchedAds / maxAds) * 100;
-            progress = percentage;
             $("#progress-bar").css("width", percentage + "%").text(Math.floor(percentage) + "%");
         }
 
@@ -100,12 +98,24 @@
             $("#usd-balance").text(balanceUSD.toFixed(3));
             $("#bdt-balance").text(balanceBDT.toFixed(2));
 
+            // Save to localStorage
+            localStorage.setItem("watchedAds", watchedAds);
+            localStorage.setItem("balanceUSD", balanceUSD);
+            localStorage.setItem("balanceBDT", balanceBDT);
+
             if (balanceUSD >= 1) {
                 $("#withdraw-btn").prop("disabled", false); // Enable withdraw button if balance >= $1
             } else {
                 $("#withdraw-btn").prop("disabled", true); // Disable withdraw button if balance < $1
             }
         }
+
+        // Initialize UI with stored data
+        $(document).ready(function() {
+            $("#watched-ads").text(watchedAds);
+            updateProgress();
+            updateBalance();
+        });
 
         // Watch Ad Button click handler
         $("#watch-ad-btn").click(function() {
@@ -128,13 +138,14 @@
                 alert("Withdraw request for " + balanceUSD.toFixed(3) + " USD is submitted.");
                 // Reset after withdraw
                 watchedAds = 0;
-                $("#watched-ads").text(watchedAds);
+                localStorage.setItem("watchedAds", watchedAds);
                 updateProgress();
                 updateBalance();
             } else {
                 alert("You need more balance to withdraw.");
             }
         });
+
     </script>
 
 </body>
