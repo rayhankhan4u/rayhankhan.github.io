@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watch for Earn</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://whephiwums.com/sdk.js" data-zone="9042229" data-sdk="show_9042229"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -70,19 +72,16 @@
     <button id="watch-ad-btn">Watch Ad</button>
     <button id="withdraw-btn" disabled>Withdraw</button>
 
-    <!-- Moneteg SDK Script -->
-    <script src="https://whephiwums.com/sdk.js" data-zone="9042229" data-sdk="show_9042229"></script>
-
     <script>
-        // Constants
-        var usdPerAd = 0.005; // $0.005 per ad watched
-        var bdtPerAd = 0.50;  // ৳0.50 per ad watched
-        var maxAds = 200; // Number of ads required for full balance (100% progress)
+        // লোকাল স্টোরেজ থেকে ব্যালেন্স পুনরুদ্ধার
+        var watchedAds = localStorage.getItem("watchedAds") ? parseInt(localStorage.getItem("watchedAds")) : 0;
+        var balanceUSD = localStorage.getItem("balanceUSD") ? parseFloat(localStorage.getItem("balanceUSD")) : 0;
+        var balanceBDT = localStorage.getItem("balanceBDT") ? parseFloat(localStorage.getItem("balanceBDT")) : 0;
 
-        // Retrieve stored data from localStorage
-        var watchedAds = parseInt(localStorage.getItem("watchedAds")) || 0;
-        var balanceUSD = parseFloat(localStorage.getItem("balanceUSD")) || 0;
-        var balanceBDT = parseFloat(localStorage.getItem("balanceBDT")) || 0;
+        // Constants
+        var usdPerAd = 0.005; // প্রতি এডে $0.005
+        var bdtPerAd = 0.50;  // প্রতি এডে ৳0.50
+        var maxAds = 200; // 200 এড দেখলে 100% progress হবে
 
         // Function to update the progress
         function updateProgress() {
@@ -98,34 +97,33 @@
             $("#usd-balance").text(balanceUSD.toFixed(3));
             $("#bdt-balance").text(balanceBDT.toFixed(2));
 
-            // Save to localStorage
+            // লোকাল স্টোরেজে সেভ করুন
             localStorage.setItem("watchedAds", watchedAds);
             localStorage.setItem("balanceUSD", balanceUSD);
             localStorage.setItem("balanceBDT", balanceBDT);
 
+            // উইথড্র বাটন কন্ট্রোল
             if (balanceUSD >= 1) {
-                $("#withdraw-btn").prop("disabled", false); // Enable withdraw button if balance >= $1
+                $("#withdraw-btn").prop("disabled", false);
             } else {
-                $("#withdraw-btn").prop("disabled", true); // Disable withdraw button if balance < $1
+                $("#withdraw-btn").prop("disabled", true);
             }
         }
 
-        // Initialize UI with stored data
-        $(document).ready(function() {
-            $("#watched-ads").text(watchedAds);
-            updateProgress();
-            updateBalance();
-        });
+        // ব্যালেন্স ও প্রগ্রেস আপডেট করুন
+        updateBalance();
+        updateProgress();
 
         // Watch Ad Button click handler
         $("#watch-ad-btn").click(function() {
             if (watchedAds < maxAds) {
                 show_9042229().then(() => {
-                    // Ad watched successfully, update count and balance
-                    watchedAds++;
-                    $("#watched-ads").text(watchedAds);
-                    updateProgress();
-                    updateBalance();
+                    setTimeout(() => {
+                        watchedAds++;
+                        $("#watched-ads").text(watchedAds);
+                        updateProgress();
+                        updateBalance();
+                    }, 2000);
                 }).catch((e) => {
                     console.error("Error showing ad:", e);
                 });
@@ -136,9 +134,11 @@
         $("#withdraw-btn").click(function() {
             if (balanceUSD >= 1) {
                 alert("Withdraw request for " + balanceUSD.toFixed(3) + " USD is submitted.");
-                // Reset after withdraw
+                // উইথড্র হলে সবকিছু রিসেট হবে
                 watchedAds = 0;
                 localStorage.setItem("watchedAds", watchedAds);
+                localStorage.setItem("balanceUSD", 0);
+                localStorage.setItem("balanceBDT", 0);
                 updateProgress();
                 updateBalance();
             } else {
