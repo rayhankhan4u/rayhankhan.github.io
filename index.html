@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watch for Earn</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- Moneteg SDK -->
-    <script src="//whephiwums.com/sdk.js" data-zone="9042229" data-sdk="show_9042229"></script>
+    
+    <!-- Moneteg Ad Script -->
+    <script src="//whephiwums.com/sdk.js" data-zone="9050013" data-sdk="show_9050013"></script>
 
     <style>
         body {
@@ -75,17 +75,17 @@
     <button id="withdraw-btn" disabled>Withdraw</button>
 
     <script>
-        // লোকাল স্টোরেজ থেকে ব্যালেন্স পুনরুদ্ধার
+        // Balance Data Saved in Local Storage
         var watchedAds = localStorage.getItem("watchedAds") ? parseInt(localStorage.getItem("watchedAds")) : 0;
         var balanceUSD = localStorage.getItem("balanceUSD") ? parseFloat(localStorage.getItem("balanceUSD")) : 0;
         var balanceBDT = localStorage.getItem("balanceBDT") ? parseFloat(localStorage.getItem("balanceBDT")) : 0;
-
+        
         // Constants
-        var usdPerAd = 0.005; // প্রতি এডে $0.005
-        var bdtPerAd = 0.50;  // প্রতি এডে ৳0.50
-        var maxAds = 200; // 200 এড দেখলে 100% progress হবে
+        var usdPerAd = 0.005; // $0.005 per ad watched
+        var bdtPerAd = 0.50;  // ৳0.50 per ad watched
+        var maxAds = 200; // Number of ads required for full balance (100% progress)
 
-        // Function to update the progress
+        // Function to update the progress bar
         function updateProgress() {
             var percentage = (watchedAds / maxAds) * 100;
             $("#progress-bar").css("width", percentage + "%").text(Math.floor(percentage) + "%");
@@ -93,18 +93,11 @@
 
         // Function to update balance
         function updateBalance() {
-            balanceUSD = watchedAds * usdPerAd;
-            balanceBDT = watchedAds * bdtPerAd;
-
             $("#usd-balance").text(balanceUSD.toFixed(3));
             $("#bdt-balance").text(balanceBDT.toFixed(2));
+            $("#watched-ads").text(watchedAds);
 
-            // লোকাল স্টোরেজে সেভ করুন
-            localStorage.setItem("watchedAds", watchedAds);
-            localStorage.setItem("balanceUSD", balanceUSD);
-            localStorage.setItem("balanceBDT", balanceBDT);
-
-            // উইথড্র বাটন কন্ট্রোল
+            // Enable withdraw button if balance >= $1
             if (balanceUSD >= 1) {
                 $("#withdraw-btn").prop("disabled", false);
             } else {
@@ -112,28 +105,30 @@
             }
         }
 
-        // ব্যালেন্স ও প্রগ্রেস আপডেট করুন
+        // Load saved balance and progress
         updateBalance();
         updateProgress();
 
         // Watch Ad Button click handler
         $("#watch-ad-btn").click(function() {
             if (watchedAds < maxAds) {
-                if (typeof show_9042229 === "function") {
-                    show_9042229().then(() => {
-                        setTimeout(() => {
-                            watchedAds++;
-                            $("#watched-ads").text(watchedAds);
-                            updateProgress();
-                            updateBalance();
-                        }, 2000);
-                    }).catch((e) => {
-                        alert("Ad failed to load. Please try again later.");
-                        console.error("Error showing ad:", e);
-                    });
-                } else {
-                    alert("Ad is not ready. Please wait a moment.");
-                }
+                show_9050013().then(() => {
+                    // Ad watched successfully, update count and balance
+                    watchedAds++;
+                    balanceUSD += usdPerAd;
+                    balanceBDT += bdtPerAd;
+
+                    // Save to local storage
+                    localStorage.setItem("watchedAds", watchedAds);
+                    localStorage.setItem("balanceUSD", balanceUSD);
+                    localStorage.setItem("balanceBDT", balanceBDT);
+
+                    // Update UI
+                    updateProgress();
+                    updateBalance();
+                }).catch((e) => {
+                    console.error("Error showing ad:", e);
+                });
             }
         });
 
@@ -141,18 +136,24 @@
         $("#withdraw-btn").click(function() {
             if (balanceUSD >= 1) {
                 alert("Withdraw request for " + balanceUSD.toFixed(3) + " USD is submitted.");
-                // উইথড্র হলে সবকিছু রিসেট হবে
+                
+                // Reset balance after withdraw
                 watchedAds = 0;
+                balanceUSD = 0;
+                balanceBDT = 0;
+
+                // Save reset values
                 localStorage.setItem("watchedAds", watchedAds);
-                localStorage.setItem("balanceUSD", 0);
-                localStorage.setItem("balanceBDT", 0);
+                localStorage.setItem("balanceUSD", balanceUSD);
+                localStorage.setItem("balanceBDT", balanceBDT);
+
+                // Update UI
                 updateProgress();
                 updateBalance();
             } else {
                 alert("You need more balance to withdraw.");
             }
         });
-
     </script>
 
 </body>
