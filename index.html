@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watch for Earn</title>
-    <!-- Add script for Monetag Ads -->
-    <script src='//whephiwums.com/sdk.js' data-zone='9042229' data-sdk='show_9042229'></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -72,7 +70,6 @@
             color: #fff;
         }
 
-        /* Name Styling */
         .developer-name {
             font-size: 18px;
             color: #fff;
@@ -84,7 +81,7 @@
         .developer-name span {
             font-family: 'Cursive', sans-serif;
             font-size: 24px;
-            color: #4caf50; 
+            color: #4caf50;
             text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
         }
     </style>
@@ -96,14 +93,18 @@
         <div class="progress-circle" id="progress-circle">0%</div>
         <p>Watched Ads: <span id="watched-ads">0</span></p>
         <p>Balance: $<span id="earned-usd">0.00</span> (৳<span id="earned-bdt">0.00</span>)</p>
-        
+
         <button id="watch-ad-btn">Watch Ad</button>
         <button id="join-btn">Join Now</button>
-        <button id="withdraw-btn">Withdraw</button>
+        <button id="withdraw-btn" disabled>Withdraw</button>
 
         <div id="withdraw-section" class="withdraw-section hidden">
             <h3>Withdraw Funds</h3>
             <input type="number" id="withdraw-amount" placeholder="Enter Amount">
+            <select id="currency-type">
+                <option value="usd">USD</option>
+                <option value="bdt">BDT</option>
+            </select>
             <select id="payment-method">
                 <option value="Bkash">Bkash</option>
                 <option value="Nagad">Nagad</option>
@@ -119,7 +120,7 @@
     <p class="developer-name">Developed by <span>Rayhan</span></p>
 
     <script>
-        const conversionRate = 110; // 1 USD = 110 BDT (আপনার রেট অনুযায়ী পরিবর্তন করুন)
+        const conversionRate = 110; // 1 USD = 110 BDT
         let watchedAds = parseInt(localStorage.getItem('watchedAds') || 0);
         let earnedUsd = parseFloat(localStorage.getItem('earnedUsd') || 0.00);
 
@@ -136,23 +137,27 @@
         });
 
         function watchAd() {
-            // Rewarded Interstitial Ad
-            show_9042229().then(() => {
-                watchedAds++;
-                earnedUsd += 0.005;
-                localStorage.setItem('watchedAds', watchedAds);
-                localStorage.setItem('earnedUsd', earnedUsd.toFixed(2));
-                document.getElementById('watched-ads').textContent = watchedAds;
-                document.getElementById('earned-usd').textContent = earnedUsd.toFixed(2);
-                document.getElementById('earned-bdt').textContent = (earnedUsd * conversionRate).toFixed(2);
-                updateProgressBar();
-            }).catch(err => console.error("Ad failed to load", err));
+            const adRewardAmount = 0.005; // Amount earned per ad view
+            watchedAds++;
+            earnedUsd += adRewardAmount;
+            localStorage.setItem('watchedAds', watchedAds);
+            localStorage.setItem('earnedUsd', earnedUsd.toFixed(2));
+
+            document.getElementById('watched-ads').textContent = watchedAds;
+            document.getElementById('earned-usd').textContent = earnedUsd.toFixed(2);
+            document.getElementById('earned-bdt').textContent = (earnedUsd * conversionRate).toFixed(2);
+            updateProgressBar();
+
+            if (earnedUsd >= 1) {
+                document.getElementById('withdraw-btn').disabled = false; // Enable withdraw button if balance is sufficient
+            }
         }
 
         function updateProgressBar() {
-            const progress = (watchedAds % 20) * 5;
+            // Each ad gives 0.5% progress, so total progress will be 0.5% * number of ads watched
+            const progress = watchedAds * 0.5; // 0.5% per ad
             document.getElementById('progress-circle').style.background = `conic-gradient(#4caf50 ${progress}%, #444 ${progress}%)`;
-            document.getElementById('progress-circle').textContent = `${progress}%`;
+            document.getElementById('progress-circle').textContent = `${Math.min(progress, 100)}%`;
         }
 
         function toggleWithdraw() {
@@ -162,6 +167,7 @@
         function withdrawPoints() {
             const amount = parseFloat(document.getElementById('withdraw-amount').value);
             const method = document.getElementById('payment-method').value;
+            const currency = document.getElementById('currency-type').value;
             const phone = document.getElementById('phone-number').value;
 
             if (amount < 1 || amount > earnedUsd) {
@@ -174,7 +180,7 @@
             document.getElementById('earned-usd').textContent = earnedUsd.toFixed(2);
             document.getElementById('earned-bdt').textContent = (earnedUsd * conversionRate).toFixed(2);
 
-            const message = `Withdrawal Request:\nAmount: $${amount} (~৳${(amount * conversionRate).toFixed(2)})\nMethod: ${method}\nWallet/Phone: ${phone}`;
+            const message = `Withdrawal Request:\nAmount: ${currency === 'usd' ? '$' + amount : '৳' + (amount * conversionRate).toFixed(2)}\nMethod: ${method}\nWallet/Phone: ${phone}`;
             sendTelegramMessage(message);
         }
 
