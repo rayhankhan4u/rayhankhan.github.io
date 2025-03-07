@@ -51,6 +51,15 @@
             background-color: gray;
             cursor: not-allowed;
         }
+        #developer {
+            font-size: 18px;
+            margin-top: 20px;
+            color: #4caf50;
+            font-weight: bold;
+        }
+        #developer span {
+            color: #ff5722;
+        }
     </style>
 </head>
 <body>
@@ -64,7 +73,7 @@
     </div>
 
     <div id="withdraw-notice">
-        <strong>Notice:</strong> The Withdraw button will be disabled until you have sufficient balance.
+        <strong>Notice:</strong> The Withdraw button will be disabled until you have sufficient balance of $1 or equivalent in BDT.
     </div>
 
     <div class="progress-bar">
@@ -74,6 +83,10 @@
     <button id="watch-ad-btn">Watch Ad</button>
     <button id="withdraw-btn" disabled>Withdraw</button>
 
+    <div id="developer">
+        Developed by <span>Rayhan</span>
+    </div>
+
     <script>
         // Balance Data Saved in Local Storage
         var watchedAds = localStorage.getItem("watchedAds") ? parseInt(localStorage.getItem("watchedAds")) : 0;
@@ -81,9 +94,9 @@
         var balanceBDT = localStorage.getItem("balanceBDT") ? parseFloat(localStorage.getItem("balanceBDT")) : 0;
         
         // Constants
-        var usdPerAd = 0.005; // $0.005 per ad watched
-        var bdtPerAd = 0.50;  // ৳0.50 per ad watched
-        var maxAds = 200; // Number of ads required for full balance (100% progress)
+        var usdPerAd = 0.0035; // $0.0035 per ad watched
+        var bdtPerAd = 0.35;   // ৳0.35 per ad watched
+        var maxAds = 285;      // Number of ads required for full balance ($1)
 
         // Function to update the progress bar
         function updateProgress() {
