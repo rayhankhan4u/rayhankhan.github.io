@@ -4,205 +4,138 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watch for Earn</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            background: #121212;
-            color: #fff;
-            margin: 0;
-            padding: 0;
+            margin-top: 50px;
         }
-        .container {
-            max-width: 400px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #1e1e1e;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+        #balance-container {
+            margin: 20px;
         }
-        h1 {
-            font-size: 18px;
-            font-weight: bold;
+        #withdraw-notice {
+            color: red;
+            font-size: 16px;
+            text-align: center;
+            margin-top: 10px;
         }
-        .progress-circle {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: conic-gradient(#4caf50 0%, #444 0%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: bold;
-            margin: auto;
-            transition: background 0.5s ease-in-out;
+        .progress-bar {
+            width: 100%;
+            background-color: #f3f3f3;
+            border-radius: 25px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+        .progress-bar span {
+            display: block;
+            height: 30px;
+            background-color: #4caf50;
+            text-align: center;
+            color: white;
         }
         button {
-            background: #4caf50;
+            padding: 10px 20px;
+            background-color: #4caf50;
+            border: none;
             color: white;
-            border: none;
-            padding: 10px 15px;
-            margin: 10px;
-            border-radius: 5px;
+            font-size: 16px;
             cursor: pointer;
-            transition: background 0.3s ease;
+            margin-top: 20px;
         }
-        button:hover {
-            background: #388e3c;
-        }
-        .hidden {
-            display: none;
-        }
-        .withdraw-section {
-            background: #252525;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-        input, select {
-            width: 90%;
-            padding: 10px;
-            margin-top: 10px;
-            border: none;
-            border-radius: 5px;
-            background: #333;
-            color: #fff;
-        }
-
-        /* Name Styling */
-        .developer-name {
-            font-size: 18px;
-            color: #fff;
-            font-family: 'Arial', sans-serif;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        .developer-name span {
-            font-family: 'Cursive', sans-serif;
-            font-size: 24px;
-            color: #4caf50; 
-            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.6);
-        }
-        .notice {
-            color: red;
-            font-weight: bold;
-            margin-top: 10px;
+        button:disabled {
+            background-color: gray;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Watch for Earn</h1>
-        <h2>Minimum Withdraw: $1 or equivalent BDT</h2>
-        <div class="progress-circle" id="progress-circle">0%</div>
-        <p>Watched Ads: <span id="watched-ads">0</span></p>
-        <p>Balance: $<span id="earned-usd">0.00</span> (৳<span id="earned-bdt">0.00</span>)</p>
-        
-        <button id="watch-ad-btn">Watch Ad</button>
-        <button id="join-btn">Join Now</button>
-        <button id="withdraw-btn" disabled>Withdraw</button>
 
-        <div id="withdraw-section" class="withdraw-section hidden">
-            <h3>Withdraw Funds</h3>
-            <input type="number" id="withdraw-amount" placeholder="Enter Amount">
-            <select id="payment-method">
-                <option value="Bkash">Bkash</option>
-                <option value="Nagad">Nagad</option>
-                <option value="Payeer">Payeer</option>
-                <option value="TRC20">TRC20 (USDT)</option>
-            </select>
-            <input type="text" id="phone-number" placeholder="Enter Your Wallet/Phone Number">
-            <input type="text" id="telegram-username" placeholder="Your Telegram Username">
-            <button id="submit-withdraw">Submit</button>
-        </div>
-        
-        <div id="notice" class="notice hidden">
-            <p>Withdrawal button will remain disabled until you reach $1 or equivalent BDT.</p>
-        </div>
+    <h1>Watch for Earn</h1>
+    
+    <div id="balance-container">
+        <p>Minimum Withdraw: $1 or equivalent BDT</p>
+        <p>Watched Ads: <span id="watched-ads">0</span></p>
+        <p>Balance: $<span id="usd-balance">0</span> (৳<span id="bdt-balance">0</span>)</p>
     </div>
 
-    <p class="developer-name">Developed by <span>Rayhan</span></p>
+    <div id="withdraw-notice">
+        <strong>Notice:</strong> The Withdraw button will be disabled until you have sufficient balance.
+    </div>
+
+    <div class="progress-bar">
+        <span id="progress-bar" style="width: 0%;">0%</span>
+    </div>
+
+    <button id="watch-ad-btn">Watch Ad</button>
+    <button id="withdraw-btn" disabled>Withdraw</button>
+
+    <!-- Moneteg SDK Script -->
+    <script src="https://whephiwums.com/sdk.js" data-zone="9042229" data-sdk="show_9042229"></script>
 
     <script>
-        const conversionRate = 110; // 1 USD = 110 BDT
-        let watchedAds = parseInt(localStorage.getItem('watchedAds') || 0);
-        let earnedUsd = parseFloat(localStorage.getItem('earnedUsd') || 0.00);
+        // Global variables
+        var watchedAds = 0;
+        var balanceUSD = 0;
+        var balanceBDT = 0;
+        var progress = 0;
 
-        document.getElementById('watched-ads').textContent = watchedAds;
-        document.getElementById('earned-usd').textContent = earnedUsd.toFixed(2);
-        document.getElementById('earned-bdt').textContent = (earnedUsd * conversionRate).toFixed(2);
-        updateProgressBar();
-        updateWithdrawButtonState();
+        // Constants
+        var usdPerAd = 0.005; // $0.005 per ad watched
+        var bdtPerAd = 0.50;  // ৳0.50 per ad watched
+        var maxAds = 200; // Number of ads required for full balance (100% progress)
 
-        document.getElementById('watch-ad-btn').addEventListener('click', watchAd);
-        document.getElementById('withdraw-btn').addEventListener('click', toggleWithdraw);
-        document.getElementById('submit-withdraw').addEventListener('click', withdrawPoints);
-        document.getElementById('join-btn').addEventListener('click', function () {
-            window.location.href = "https://t.me/rayhankhanforyou";
+        // Function to update the progress
+        function updateProgress() {
+            var percentage = (watchedAds / maxAds) * 100;
+            progress = percentage;
+            $("#progress-bar").css("width", percentage + "%").text(Math.floor(percentage) + "%");
+        }
+
+        // Function to update balance
+        function updateBalance() {
+            balanceUSD = watchedAds * usdPerAd;
+            balanceBDT = watchedAds * bdtPerAd;
+
+            $("#usd-balance").text(balanceUSD.toFixed(3));
+            $("#bdt-balance").text(balanceBDT.toFixed(2));
+
+            if (balanceUSD >= 1) {
+                $("#withdraw-btn").prop("disabled", false); // Enable withdraw button if balance >= $1
+            } else {
+                $("#withdraw-btn").prop("disabled", true); // Disable withdraw button if balance < $1
+            }
+        }
+
+        // Watch Ad Button click handler
+        $("#watch-ad-btn").click(function() {
+            if (watchedAds < maxAds) {
+                show_9042229().then(() => {
+                    // Ad watched successfully, update count and balance
+                    watchedAds++;
+                    $("#watched-ads").text(watchedAds);
+                    updateProgress();
+                    updateBalance();
+                }).catch((e) => {
+                    console.error("Error showing ad:", e);
+                });
+            }
         });
 
-        function watchAd() {
-            // Simulating watching an ad
-            watchedAds++;
-            earnedUsd += 0.005; // Adding $0.005 for each ad watched
-            localStorage.setItem('watchedAds', watchedAds);
-            localStorage.setItem('earnedUsd', earnedUsd.toFixed(2));
-            document.getElementById('watched-ads').textContent = watchedAds;
-            document.getElementById('earned-usd').textContent = earnedUsd.toFixed(2);
-            document.getElementById('earned-bdt').textContent = (earnedUsd * conversionRate).toFixed(2);
-            updateProgressBar();
-            updateWithdrawButtonState();
-        }
-
-        function updateProgressBar() {
-            const progress = Math.min((watchedAds * 0.5), 100); // Each ad gives 0.5%, max 100%
-            document.getElementById('progress-circle').style.background = `conic-gradient(#4caf50 ${progress}%, #444 ${progress}%)`;
-            document.getElementById('progress-circle').textContent = `${progress}%`;
-        }
-
-        function updateWithdrawButtonState() {
-            if (earnedUsd >= 1) {
-                document.getElementById('withdraw-btn').disabled = false;
-                document.getElementById('notice').classList.add('hidden');
+        // Withdraw Button click handler
+        $("#withdraw-btn").click(function() {
+            if (balanceUSD >= 1) {
+                alert("Withdraw request for " + balanceUSD.toFixed(3) + " USD is submitted.");
+                // Reset after withdraw
+                watchedAds = 0;
+                $("#watched-ads").text(watchedAds);
+                updateProgress();
+                updateBalance();
             } else {
-                document.getElementById('withdraw-btn').disabled = true;
-                document.getElementById('notice').classList.remove('hidden');
+                alert("You need more balance to withdraw.");
             }
-        }
-
-        function toggleWithdraw() {
-            document.getElementById('withdraw-section').classList.toggle('hidden');
-        }
-
-        function withdrawPoints() {
-            const amount = parseFloat(document.getElementById('withdraw-amount').value);
-            const method = document.getElementById('payment-method').value;
-            const phone = document.getElementById('phone-number').value;
-
-            if (amount < 1 || amount > earnedUsd) {
-                alert('Invalid withdrawal amount.');
-                return;
-            }
-
-            earnedUsd -= amount;
-            localStorage.setItem('earnedUsd', earnedUsd.toFixed(2));
-            document.getElementById('earned-usd').textContent = earnedUsd.toFixed(2);
-            document.getElementById('earned-bdt').textContent = (earnedUsd * conversionRate).toFixed(2);
-
-            const message = `Withdrawal Request:\nAmount: $${amount} (~৳${(amount * conversionRate).toFixed(2)})\nMethod: ${method}\nWallet/Phone: ${phone}`;
-            sendTelegramMessage(message);
-        }
-
-        function sendTelegramMessage(msg) {
-            const botToken = "7675676405:AAF8Goz8aDIfSn3j5vxYo8RN76f3-YrjgqQ";
-            const chatId = "7167361126";
-            fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(msg)}`)
-                .then(response => response.json())
-                .then(data => console.log('Message sent to admin'))
-                .catch(error => console.error('Error:', error));
-        }
+        });
     </script>
+
 </body>
 </html>
