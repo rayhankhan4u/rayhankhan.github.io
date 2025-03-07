@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watch for Earn</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://whephiwums.com/sdk.js" data-zone="9042229" data-sdk="show_9042229"></script>
+
+    <!-- Moneteg SDK -->
+    <script src="//whephiwums.com/sdk.js" data-zone="9042229" data-sdk="show_9042229"></script>
 
     <style>
         body {
@@ -117,16 +119,21 @@
         // Watch Ad Button click handler
         $("#watch-ad-btn").click(function() {
             if (watchedAds < maxAds) {
-                show_9042229().then(() => {
-                    setTimeout(() => {
-                        watchedAds++;
-                        $("#watched-ads").text(watchedAds);
-                        updateProgress();
-                        updateBalance();
-                    }, 2000);
-                }).catch((e) => {
-                    console.error("Error showing ad:", e);
-                });
+                if (typeof show_9042229 === "function") {
+                    show_9042229().then(() => {
+                        setTimeout(() => {
+                            watchedAds++;
+                            $("#watched-ads").text(watchedAds);
+                            updateProgress();
+                            updateBalance();
+                        }, 2000);
+                    }).catch((e) => {
+                        alert("Ad failed to load. Please try again later.");
+                        console.error("Error showing ad:", e);
+                    });
+                } else {
+                    alert("Ad is not ready. Please wait a moment.");
+                }
             }
         });
 
