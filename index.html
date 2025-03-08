@@ -51,6 +51,16 @@
             background-color: gray;
             cursor: not-allowed;
         }
+        #transaction-history {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: left;
+            display: none;
+        }
         #developer {
             font-size: 18px;
             margin-top: 20px;
@@ -59,43 +69,6 @@
         }
         #developer span {
             color: #ff5722;
-        }
-        #withdraw-popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
-        }
-        #withdraw-popup p {
-            font-size: 18px;
-            color: #333;
-        }
-        #close-popup {
-            margin-top: 10px;
-            background: #ff5722;
-        }
-        #transaction-history {
-            margin-top: 20px;
-            text-align: center;
-        }
-        table {
-            width: 90%;
-            margin: auto;
-            border-collapse: collapse;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background-color: #4caf50;
-            color: white;
         }
     </style>
 </head>
@@ -119,34 +92,25 @@
 
     <button id="watch-ad-btn">Watch Ad</button>
     <button id="withdraw-btn" disabled>Withdraw</button>
-    <button id="view-history-btn">Transaction History</button>
-
-    <div id="withdraw-popup">
-        <p>Withdraw request for $<span id="withdraw-amount"></span> has been submitted! You will receive it within 24 hours.</p>
-        <button id="close-popup">OK</button>
-    </div>
+    <button id="transaction-btn">Transaction History</button>
 
     <div id="transaction-history">
-        <h2>Transaction History</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Amount (USD)</th>
-                </tr>
-            </thead>
-            <tbody id="transaction-table">
-                <tr><td colspan="2">No transactions yet</td></tr>
-            </tbody>
-        </table>
+        <h3>Transaction History</h3>
+        <ul id="transaction-list"></ul>
+    </div>
+
+    <div id="developer">
+        Developed by <span>Rayhan</span>
     </div>
 
     <script>
+        // Balance Data Saved in Local Storage
         var watchedAds = localStorage.getItem("watchedAds") ? parseInt(localStorage.getItem("watchedAds")) : 0;
         var balanceUSD = localStorage.getItem("balanceUSD") ? parseFloat(localStorage.getItem("balanceUSD")) : 0;
         var balanceBDT = localStorage.getItem("balanceBDT") ? parseFloat(localStorage.getItem("balanceBDT")) : 0;
-        var transactionHistory = JSON.parse(localStorage.getItem("transactionHistory")) || [];
+        var transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
+        // Constants
         var usdPerAd = 0.0035;
         var bdtPerAd = 0.35;
         var maxAds = 285;
@@ -168,21 +132,16 @@
             }
         }
 
-        function updateTransactionHistoryUI() {
-            var table = $("#transaction-table");
-            table.html("");
-            if (transactionHistory.length === 0) {
-                table.append("<tr><td colspan='2'>No transactions yet</td></tr>");
-            } else {
-                transactionHistory.forEach(tx => {
-                    table.append(`<tr><td>${tx.date}</td><td>$${tx.amount.toFixed(3)}</td></tr>`);
-                });
-            }
+        function updateTransactionHistory() {
+            $("#transaction-list").empty();
+            transactions.forEach(tx => {
+                $("#transaction-list").append("<li>" + tx + "</li>");
+            });
         }
 
         updateBalance();
         updateProgress();
-        updateTransactionHistoryUI();
+        updateTransactionHistory();
 
         $("#watch-ad-btn").click(function() {
             if (watchedAds < maxAds) {
@@ -197,24 +156,39 @@
 
                     updateProgress();
                     updateBalance();
+                }).catch((e) => {
+                    console.error("Error showing ad:", e);
                 });
             }
         });
 
         $("#withdraw-btn").click(function() {
-            $("#withdraw-amount").text(balanceUSD.toFixed(3));
-            $("#withdraw-popup").fadeIn();
-            transactionHistory.push({ date: new Date().toLocaleString(), amount: balanceUSD });
-            localStorage.setItem("transactionHistory", JSON.stringify(transactionHistory));
+            if (balanceUSD >= 1) {
+                var withdrawMessage = "Your withdrawal request of $" + balanceUSD.toFixed(3) + " has been submitted.\nYou will receive your payment within 24 hours.";
+                alert(withdrawMessage);
 
-            watchedAds = 0;
-            balanceUSD = 0;
-            balanceBDT = 0;
-            updateBalance();
-            updateTransactionHistoryUI();
+                transactions.push("Withdrawn: $" + balanceUSD.toFixed(3) + " (৳" + balanceBDT.toFixed(2) + ") on " + new Date().toLocaleString());
+                localStorage.setItem("transactions", JSON.stringify(transactions));
+
+                watchedAds = 0;
+                balanceUSD = 0;
+                balanceBDT = 0;
+
+                localStorage.setItem("watchedAds", watchedAds);
+                localStorage.setItem("balanceUSD", balanceUSD);
+                localStorage.setItem("balanceBDT", balanceBDT);
+
+                updateProgress();
+                updateBalance();
+                updateTransactionHistory();
+            } else {
+                alert("You need more balance to withdraw.");
+            }
         });
 
-        $("#close-popup").click(function() { $("#withdraw-popup").fadeOut(); });
+        $("#transaction-btn").click(function() {
+            $("#transaction-history").toggle();
+        });
     </script>
 
 </body>
