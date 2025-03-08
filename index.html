@@ -60,6 +60,43 @@
         #developer span {
             color: #ff5722;
         }
+        #withdraw-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+        #withdraw-popup p {
+            font-size: 18px;
+            color: #333;
+        }
+        #close-popup {
+            margin-top: 10px;
+            background: #ff5722;
+        }
+        #transaction-history {
+            margin-top: 20px;
+            text-align: center;
+        }
+        table {
+            width: 90%;
+            margin: auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #4caf50;
+            color: white;
+        }
     </style>
 </head>
 <body>
@@ -82,35 +119,48 @@
 
     <button id="watch-ad-btn">Watch Ad</button>
     <button id="withdraw-btn" disabled>Withdraw</button>
+    <button id="view-history-btn">Transaction History</button>
 
-    <div id="developer">
-        Developed by <span>Rayhan</span>
+    <div id="withdraw-popup">
+        <p>Withdraw request for $<span id="withdraw-amount"></span> has been submitted! You will receive it within 24 hours.</p>
+        <button id="close-popup">OK</button>
+    </div>
+
+    <div id="transaction-history">
+        <h2>Transaction History</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Amount (USD)</th>
+                </tr>
+            </thead>
+            <tbody id="transaction-table">
+                <tr><td colspan="2">No transactions yet</td></tr>
+            </tbody>
+        </table>
     </div>
 
     <script>
-        // Balance Data Saved in Local Storage
         var watchedAds = localStorage.getItem("watchedAds") ? parseInt(localStorage.getItem("watchedAds")) : 0;
         var balanceUSD = localStorage.getItem("balanceUSD") ? parseFloat(localStorage.getItem("balanceUSD")) : 0;
         var balanceBDT = localStorage.getItem("balanceBDT") ? parseFloat(localStorage.getItem("balanceBDT")) : 0;
-        
-        // Constants
-        var usdPerAd = 0.0035; // $0.0035 per ad watched
-        var bdtPerAd = 0.35;   // ৳0.35 per ad watched
-        var maxAds = 285;      // Number of ads required for full balance ($1)
+        var transactionHistory = JSON.parse(localStorage.getItem("transactionHistory")) || [];
 
-        // Function to update the progress bar
+        var usdPerAd = 0.0035;
+        var bdtPerAd = 0.35;
+        var maxAds = 285;
+
         function updateProgress() {
             var percentage = (watchedAds / maxAds) * 100;
             $("#progress-bar").css("width", percentage + "%").text(Math.floor(percentage) + "%");
         }
 
-        // Function to update balance
         function updateBalance() {
             $("#usd-balance").text(balanceUSD.toFixed(3));
             $("#bdt-balance").text(balanceBDT.toFixed(2));
             $("#watched-ads").text(watchedAds);
 
-            // Enable withdraw button if balance >= $1
             if (balanceUSD >= 1) {
                 $("#withdraw-btn").prop("disabled", false);
             } else {
@@ -118,55 +168,53 @@
             }
         }
 
-        // Load saved balance and progress
+        function updateTransactionHistoryUI() {
+            var table = $("#transaction-table");
+            table.html("");
+            if (transactionHistory.length === 0) {
+                table.append("<tr><td colspan='2'>No transactions yet</td></tr>");
+            } else {
+                transactionHistory.forEach(tx => {
+                    table.append(`<tr><td>${tx.date}</td><td>$${tx.amount.toFixed(3)}</td></tr>`);
+                });
+            }
+        }
+
         updateBalance();
         updateProgress();
+        updateTransactionHistoryUI();
 
-        // Watch Ad Button click handler
         $("#watch-ad-btn").click(function() {
             if (watchedAds < maxAds) {
                 show_9050013().then(() => {
-                    // Ad watched successfully, update count and balance
                     watchedAds++;
                     balanceUSD += usdPerAd;
                     balanceBDT += bdtPerAd;
 
-                    // Save to local storage
                     localStorage.setItem("watchedAds", watchedAds);
                     localStorage.setItem("balanceUSD", balanceUSD);
                     localStorage.setItem("balanceBDT", balanceBDT);
 
-                    // Update UI
                     updateProgress();
                     updateBalance();
-                }).catch((e) => {
-                    console.error("Error showing ad:", e);
                 });
             }
         });
 
-        // Withdraw Button click handler
         $("#withdraw-btn").click(function() {
-            if (balanceUSD >= 1) {
-                alert("Withdraw request for " + balanceUSD.toFixed(3) + " USD is submitted.");
-                
-                // Reset balance after withdraw
-                watchedAds = 0;
-                balanceUSD = 0;
-                balanceBDT = 0;
+            $("#withdraw-amount").text(balanceUSD.toFixed(3));
+            $("#withdraw-popup").fadeIn();
+            transactionHistory.push({ date: new Date().toLocaleString(), amount: balanceUSD });
+            localStorage.setItem("transactionHistory", JSON.stringify(transactionHistory));
 
-                // Save reset values
-                localStorage.setItem("watchedAds", watchedAds);
-                localStorage.setItem("balanceUSD", balanceUSD);
-                localStorage.setItem("balanceBDT", balanceBDT);
-
-                // Update UI
-                updateProgress();
-                updateBalance();
-            } else {
-                alert("You need more balance to withdraw.");
-            }
+            watchedAds = 0;
+            balanceUSD = 0;
+            balanceBDT = 0;
+            updateBalance();
+            updateTransactionHistoryUI();
         });
+
+        $("#close-popup").click(function() { $("#withdraw-popup").fadeOut(); });
     </script>
 
 </body>
