@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watch for Earn</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
+
     <!-- Moneteg Ad Script -->
     <script src="//whephiwums.com/sdk.js" data-zone="9050013" data-sdk="show_9050013"></script>
 
@@ -14,15 +14,15 @@
             font-family: Arial, sans-serif;
             text-align: center;
             margin-top: 50px;
+            background-color: #121212;
+            color: white;
         }
-        #balance-container {
+        #balance-container, #withdraw-notice {
             margin: 20px;
         }
         #withdraw-notice {
             color: red;
             font-size: 16px;
-            text-align: center;
-            margin-top: 10px;
         }
         .progress-bar {
             width: 100%;
@@ -60,6 +60,8 @@
             margin-right: auto;
             text-align: left;
             display: none;
+            background: white;
+            color: black;
         }
         #developer {
             font-size: 18px;
@@ -70,6 +72,11 @@
         #developer span {
             color: #ff5722;
         }
+        #ad-notice {
+            color: yellow;
+            font-size: 14px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -77,13 +84,17 @@
     <h1>Watch for Earn</h1>
     
     <div id="balance-container">
-        <p>Minimum Withdraw: $1 or equivalent BDT</p>
+        <p>Minimum Withdraw: $2 or equivalent BDT</p>
         <p>Watched Ads: <span id="watched-ads">0</span></p>
         <p>Balance: $<span id="usd-balance">0</span> (৳<span id="bdt-balance">0</span>)</p>
     </div>
 
     <div id="withdraw-notice">
-        <strong>Notice:</strong> The Withdraw button will be disabled until you have sufficient balance of $1 or equivalent in BDT.
+        <strong>Notice:</strong> The Withdraw button will be disabled until you have a balance of $2 or equivalent in BDT.
+    </div>
+
+    <div id="ad-notice">
+        <strong>Ad Viewing Rules:</strong> After clicking the 'Watch Ad' button, wait 15 seconds for the ad interface to load. Then, click the <strong>'Continue'</strong> button and wait 30 seconds on the redirected page. If you leave early, your balance will not be updated.
     </div>
 
     <div class="progress-bar">
@@ -111,9 +122,9 @@
         var transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
         // Constants
-        var usdPerAd = 0.0035;
-        var bdtPerAd = 0.35;
-        var maxAds = 285;
+        var usdPerAd = 0.005;
+        var bdtPerAd = 0.5; // Assuming 1 USD = 100 BDT
+        var maxAds = 400; // Adjusted for $2 withdrawal
 
         function updateProgress() {
             var percentage = (watchedAds / maxAds) * 100;
@@ -125,7 +136,7 @@
             $("#bdt-balance").text(balanceBDT.toFixed(2));
             $("#watched-ads").text(watchedAds);
 
-            if (balanceUSD >= 1) {
+            if (balanceUSD >= 2) {
                 $("#withdraw-btn").prop("disabled", false);
             } else {
                 $("#withdraw-btn").prop("disabled", true);
@@ -163,7 +174,7 @@
         });
 
         $("#withdraw-btn").click(function() {
-            if (balanceUSD >= 1) {
+            if (balanceUSD >= 2) {
                 var withdrawMessage = "Your withdrawal request of $" + balanceUSD.toFixed(3) + " has been submitted.\nYou will receive your payment within 24 hours.";
                 alert(withdrawMessage);
 
