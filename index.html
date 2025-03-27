@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watch for Earn</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- Moneteg Ad Script -->
+    
+    <!-- Monetag Ad Script -->
     <script src="//whephiwums.com/sdk.js" data-zone="9050013" data-sdk="show_9050013"></script>
 
     <style>
@@ -14,19 +14,21 @@
             font-family: Arial, sans-serif;
             text-align: center;
             margin-top: 50px;
-            background-color: #121212;
+            background-color: #222;
             color: white;
         }
-        #balance-container, #withdraw-notice {
+        #balance-container {
             margin: 20px;
         }
         #withdraw-notice {
             color: red;
             font-size: 16px;
+            text-align: center;
+            margin-top: 10px;
         }
         .progress-bar {
             width: 100%;
-            background-color: #f3f3f3;
+            background-color: #444;
             border-radius: 25px;
             overflow: hidden;
             margin-top: 20px;
@@ -45,7 +47,11 @@
             color: white;
             font-size: 16px;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 10px;
+            display: block;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
         }
         button:disabled {
             background-color: gray;
@@ -60,8 +66,6 @@
             margin-right: auto;
             text-align: left;
             display: none;
-            background: white;
-            color: black;
         }
         #developer {
             font-size: 18px;
@@ -72,10 +76,8 @@
         #developer span {
             color: #ff5722;
         }
-        #ad-notice {
-            color: yellow;
-            font-size: 14px;
-            margin-top: 10px;
+        #how-to-watch {
+            background-color: #ff9800;
         }
     </style>
 </head>
@@ -90,11 +92,7 @@
     </div>
 
     <div id="withdraw-notice">
-        <strong>Notice:</strong> The Withdraw button will be disabled until you have a balance of $2 or equivalent in BDT.
-    </div>
-
-    <div id="ad-notice">
-        <strong>Ad Viewing Rules:</strong> After clicking the 'Watch Ad' button, wait 15 seconds for the ad interface to load. Then, click the <strong>'Continue'</strong> button and wait 30 seconds on the redirected page. If you leave early, your balance will not be updated.
+        <strong>Notice:</strong> The Withdraw button will be disabled until you have sufficient balance of $2 or equivalent in BDT.
     </div>
 
     <div class="progress-bar">
@@ -102,6 +100,7 @@
     </div>
 
     <button id="watch-ad-btn">Watch Ad</button>
+    <button id="how-to-watch">How to Watch Ads?</button>
     <button id="withdraw-btn" disabled>Withdraw</button>
     <button id="transaction-btn">Transaction History</button>
 
@@ -115,16 +114,14 @@
     </div>
 
     <script>
-        // Balance Data Saved in Local Storage
         var watchedAds = localStorage.getItem("watchedAds") ? parseInt(localStorage.getItem("watchedAds")) : 0;
         var balanceUSD = localStorage.getItem("balanceUSD") ? parseFloat(localStorage.getItem("balanceUSD")) : 0;
         var balanceBDT = localStorage.getItem("balanceBDT") ? parseFloat(localStorage.getItem("balanceBDT")) : 0;
         var transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
-        // Constants
         var usdPerAd = 0.005;
-        var bdtPerAd = 0.5; // Assuming 1 USD = 100 BDT
-        var maxAds = 400; // Adjusted for $2 withdrawal
+        var bdtPerAd = 0.50;
+        var maxAds = 400;
 
         function updateProgress() {
             var percentage = (watchedAds / maxAds) * 100;
@@ -200,6 +197,11 @@
         $("#transaction-btn").click(function() {
             $("#transaction-history").toggle();
         });
+
+        $("#how-to-watch").click(function() {
+            window.open("https://youtube.com/shorts/hj2I3sbsg54?si=93BN251gtHefmi-k", "_blank");
+        });
+
     </script>
 
 </body>
