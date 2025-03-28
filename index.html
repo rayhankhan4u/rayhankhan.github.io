@@ -5,385 +5,597 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watch for Earn</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Monetag SDK -->
+    <script src="//whephiwums.com/sdk.js" data-zone="9050013" data-sdk="show_9050013"></script>
     <style>
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #FF5722;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --warning-color: #FFD700;
+            --error-color: #ff5555;
+            --success-color: #4CAF50;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
-            margin-top: 50px;
-            background-color: #121212;
-            color: white;
+            margin: 0;
+            padding: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
         }
-        #welcome-message {
-            font-size: 18px;
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
             margin-bottom: 20px;
-            color: #4caf50;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        #balance-container, #withdraw-notice {
-            margin: 20px;
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            font-size: 2.2em;
         }
-        #withdraw-notice {
-            color: red;
-            font-size: 16px;
-        }
-        .progress-bar {
-            width: 100%;
-            background-color: #f3f3f3;
-            border-radius: 25px;
-            overflow: hidden;
-            margin-top: 20px;
-        }
-        .progress-bar span {
-            display: block;
-            height: 30px;
-            background-color: #4caf50;
-            text-align: center;
-            color: white;
-        }
-        button {
-            padding: 10px 20px;
-            background-color: #4caf50;
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-        button:disabled {
-            background-color: gray;
-            cursor: not-allowed;
-        }
-        #transaction-history {
-            margin-top: 20px;
-            border: 1px solid #ddd;
-            padding: 10px;
-            max-width: 300px;
-            margin-left: auto;
-            margin-right: auto;
-            text-align: left;
-            display: none;
-            background: white;
-            color: black;
-        }
-        #developer {
-            font-size: 18px;
-            margin-top: 20px;
-            color: #4caf50;
+        
+        .user-info {
+            color: var(--secondary-color);
+            font-size: 1.2em;
+            margin-bottom: 20px;
             font-weight: bold;
         }
-        #developer span {
-            color: #ff5722;
+        
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.5em;
+            margin-top: 0;
         }
-        #ad-notice {
-            color: yellow;
-            font-size: 14px;
-            margin-top: 10px;
+        
+        .balance-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
         }
-        #withdraw-method {
-            display: none;
-            margin-top: 20px;
+        
+        .balance-item {
+            flex: 1;
+            padding: 10px;
         }
-        #withdraw-method select, #withdraw-method input {
-            padding: 8px;
-            margin: 5px;
-            width: 80%;
+        
+        .balance-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--primary-color);
         }
-        .popup {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #333;
-            padding: 20px;
-            border-radius: 5px;
-            z-index: 1000;
-            color: white;
+        
+        .progress-container {
+            margin: 25px 0;
         }
-        #ad-container {
-            margin: 20px auto;
-            width: 300px;
-            height: 250px;
+        
+        .progress-bar {
+            height: 30px;
             background-color: #333;
-            display: none;
+            border-radius: 15px;
+            overflow: hidden;
             position: relative;
         }
-        #ad-close-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: red;
-            color: white;
-            border: none;
-            padding: 2px 5px;
-            cursor: pointer;
-        }
-        #ad-timer {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), #8BC34A);
+            width: 0%;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: white;
             font-weight: bold;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 25px 0;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 150px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary {
+            background-color: #333;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #444;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:disabled {
+            background-color: #777;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .notice {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+        
+        .notice-warning {
+            background-color: rgba(255, 215, 0, 0.1);
+            border: 1px solid var(--warning-color);
+            color: var(--warning-color);
+        }
+        
+        .notice-error {
+            background-color: rgba(255, 85, 85, 0.1);
+            border: 1px solid var(--error-color);
+            color: var(--error-color);
+        }
+        
+        .notice-success {
+            background-color: rgba(76, 175, 80, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+        }
+        
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid var(--primary-color);
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .transaction-history {
+            display: none;
+            text-align: left;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: #252525;
+            border-radius: 5px;
+        }
+        
+        .transaction-history ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .transaction-history li {
+            padding: 8px 0;
+            border-bottom: 1px solid #333;
+        }
+        
+        .transaction-history li:last-child {
+            border-bottom: none;
+        }
+        
+        .developer {
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #777;
+        }
+        
+        .highlight {
+            color: var(--secondary-color);
+            font-weight: bold;
+        }
+        
+        /* Payment Method Dialog */
+        .payment-dialog {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .payment-content {
+            background-color: var(--card-bg);
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 400px;
+        }
+        
+        .payment-option {
+            margin: 15px 0;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .payment-option:hover {
+            background-color: #333;
+        }
+        
+        .payment-option.selected {
+            border-color: var(--primary-color);
+            background-color: rgba(76, 175, 80, 0.2);
+        }
+        
+        .payment-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #333;
+            border: 1px solid #444;
+            border-radius: 5px;
+            color: white;
+        }
+        
+        /* Responsive design */
+        @media (max-width: 600px) {
+            .balance-info {
+                flex-direction: column;
+            }
+            
+            .button-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <div id="welcome-message">
-        Welcome, <span id="user-name">User</span>!
-    </div>
-    
-    <h1>Watch for Earn</h1>
-    
-    <div id="balance-container">
-        <p>Minimum Withdraw: $2 or equivalent BDT</p>
-        <p>Watched Ads: <span id="watched-ads">0</span></p>
-        <p>Balance: $<span id="usd-balance">0</span> (৳<span id="bdt-balance">0</span>)</p>
+    <div class="container">
+        <h1>Watch for Earn</h1>
+        <div class="user-info" id="user-info">
+            Welcome, User!
+        </div>
+        
+        <div class="card">
+            <h2>Your Earnings</h2>
+            
+            <div class="balance-info">
+                <div class="balance-item">
+                    <div>Watched Ads</div>
+                    <div class="balance-value" id="watched-ads">0</div>
+                </div>
+                <div class="balance-item">
+                    <div>USD Balance</div>
+                    <div class="balance-value">$<span id="usd-balance">0.000</span></div>
+                </div>
+                <div class="balance-item">
+                    <div>BDT Balance</div>
+                    <div class="balance-value">৳<span id="bdt-balance">0.00</span></div>
+                </div>
+            </div>
+            
+            <div class="progress-container">
+                <div>Withdrawal Progress (Minimum $2.00)</div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-bar">0%</div>
+                </div>
+            </div>
+            
+            <div class="notice notice-warning">
+                <strong>Ad Viewing Rules:</strong> After clicking 'Watch Ad', wait for the ad to load. Then click 'Continue' and wait 30 seconds on the next page. Leaving early will cancel your reward.
+            </div>
+            
+            <div class="loading" id="ad-loading">
+                <div class="loading-spinner"></div>
+                <div>Loading ad, please wait...</div>
+            </div>
+            
+            <div class="button-group">
+                <button id="watch-ad-btn" class="btn btn-primary">Watch Ad (+$0.0035)</button>
+                <button id="withdraw-btn" class="btn btn-secondary" disabled>Withdraw Earnings</button>
+                <button id="transaction-btn" class="btn btn-secondary">Transaction History</button>
+            </div>
+            
+            <div class="notice notice-error" id="withdraw-notice">
+                <strong>Notice:</strong> Withdrawal available when you reach $2.00 balance.
+            </div>
+        </div>
+        
+        <div class="card transaction-history" id="transaction-history">
+            <h2>Transaction History</h2>
+            <ul id="transaction-list"></ul>
+        </div>
+        
+        <div class="developer">
+            Developed by <span class="highlight">Rayhan</span>
+        </div>
     </div>
 
-    <div id="withdraw-notice">
-        <strong>Notice:</strong> The Withdraw button will be disabled until you have a balance of $2 or equivalent in BDT.
-    </div>
-
-    <div id="ad-notice">
-        <strong>Ad Viewing Rules:</strong> After clicking the 'Watch Ad' button, wait for the ad to finish (30 seconds). Do not close the ad early or you won't get paid.
-    </div>
-
-    <div class="progress-bar">
-        <span id="progress-bar" style="width: 0%;">0%</span>
-    </div>
-
-    <button id="watch-ad-btn">Watch Ad</button>
-    <button id="withdraw-btn" disabled>Withdraw</button>
-    <button id="transaction-btn">Transaction History</button>
-
-    <div id="ad-container">
-        <button id="ad-close-btn">X</button>
-        <div id="ad-content">Advertisement</div>
-        <div id="ad-timer">30 seconds remaining</div>
-    </div>
-
-    <div id="withdraw-method">
-        <h3>Withdrawal Method</h3>
-        <select id="method-select">
-            <option value="bkash">Bkash (Personal)</option>
-            <option value="nagad">Nagad (Personal)</option>
-            <option value="trc20">TRC20 (USDT)</option>
-        </select>
-        <input type="text" id="account-number" placeholder="Account Number/TRC20 Address">
-        <button id="confirm-withdraw">Confirm Withdrawal</button>
-        <button id="cancel-withdraw">Cancel</button>
-    </div>
-
-    <div id="transaction-history">
-        <h3>Transaction History</h3>
-        <ul id="transaction-list"></ul>
-    </div>
-
-    <div id="developer">
-        Developed by <span>Rayhan</span>
-    </div>
-
-    <div id="ad-success-popup" class="popup">
-        <h3>Success!</h3>
-        <p>You have successfully watched the ad and earned $0.0035.</p>
-        <button id="close-success">OK</button>
-    </div>
-
-    <div id="ad-fail-popup" class="popup">
-        <h3>Failed!</h3>
-        <p>You didn't complete watching the ad. Please watch the full ad to earn.</p>
-        <button id="close-fail">OK</button>
+    <!-- Payment Method Dialog -->
+    <div class="payment-dialog" id="payment-dialog">
+        <div class="payment-content">
+            <h2>Select Payment Method</h2>
+            
+            <div class="payment-option" data-method="bkash">
+                <strong>Bkash (Personal)</strong>
+                <p>1.5% processing fee</p>
+            </div>
+            
+            <div class="payment-option" data-method="nagad">
+                <strong>Nagad (Personal)</strong>
+                <p>1.5% processing fee</p>
+            </div>
+            
+            <div class="payment-option" data-method="trc20">
+                <strong>USDT (TRC20)</strong>
+                <p>No processing fee</p>
+            </div>
+            
+            <input type="text" id="payment-details" class="payment-input" placeholder="Enter account number/TRC20 address">
+            
+            <div class="button-group">
+                <button id="confirm-payment" class="btn btn-primary">Confirm Withdrawal</button>
+                <button id="cancel-payment" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Balance Data Saved in Local Storage
-        let watchedAds = localStorage.getItem("watchedAds") ? parseInt(localStorage.getItem("watchedAds")) : 0;
-        let balanceUSD = localStorage.getItem("balanceUSD") ? parseFloat(localStorage.getItem("balanceUSD")) : 0;
-        let balanceBDT = localStorage.getItem("balanceBDT") ? parseFloat(localStorage.getItem("balanceBDT")) : 0;
-        let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
-        let adTimer;
-        let secondsRemaining = 30;
-
-        // Constants
-        const usdPerAd = 0.0035;
-        const bdtPerAd = 0.35; // Assuming 1 USD = 100 BDT
-        const requiredAdTime = 30; // 30 seconds
-
+        // Enhanced configuration
+        const config = {
+            earningsPerAd: {
+                usd: 0.0035, // $0.0035 per ad
+                bdt: 0.35    // 1 USD = 100 BDT
+            },
+            withdrawalThreshold: 2.00, // USD
+            maxAds: Math.ceil(2 / 0.0035), // Calculate ads needed for $2
+            adLoadingTime: 15000, // 15 seconds
+            adViewingTime: 30000, // 30 seconds
+            paymentMethods: {
+                'bkash': { name: 'Bkash (Personal)', fee: 1.5 },
+                'nagad': { name: 'Nagad (Personal)', fee: 1.5 },
+                'trc20': { name: 'USDT (TRC20)', fee: 0 }
+            }
+        };
+        
+        // User data with localStorage integration
+        const userData = {
+            watchedAds: localStorage.getItem("watchedAds") ? parseInt(localStorage.getItem("watchedAds")) : 0,
+            balanceUSD: localStorage.getItem("balanceUSD") ? parseFloat(localStorage.getItem("balanceUSD")) : 0,
+            balanceBDT: localStorage.getItem("balanceBDT") ? parseFloat(localStorage.getItem("balanceBDT")) : 0,
+            transactions: JSON.parse(localStorage.getItem("transactions")) || [],
+            selectedPaymentMethod: null,
+            
+            saveData: function() {
+                localStorage.setItem("watchedAds", this.watchedAds);
+                localStorage.setItem("balanceUSD", this.balanceUSD);
+                localStorage.setItem("balanceBDT", this.balanceBDT);
+                localStorage.setItem("transactions", JSON.stringify(this.transactions));
+            },
+            
+            addTransaction: function(type, amount, note = '') {
+                const now = new Date();
+                const timestamp = now.toLocaleString();
+                
+                this.transactions.unshift(
+                    `${timestamp}: ${type} $${amount.toFixed(4)} (Balance: $${this.balanceUSD.toFixed(3)}) ${note}`
+                );
+                
+                if (this.transactions.length > 20) {
+                    this.transactions = this.transactions.slice(0, 20);
+                }
+                
+                this.saveData();
+            }
+        };
+        
         // Initialize UI
         updateUI();
+        setupTelegramUsername();
 
-        // Get Telegram username from URL parameters
-        function getTelegramUsername() {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get('username') || 'User';
-        }
-
-        // Set welcome message with Telegram username
-        document.getElementById('user-name').textContent = getTelegramUsername();
-
-        // Watch Ad Button Click Event
-        document.getElementById('watch-ad-btn').addEventListener('click', function() {
-            startAd();
-        });
-
-        // Close Ad Button
-        document.getElementById('ad-close-btn').addEventListener('click', function() {
-            cancelAd();
-        });
-
-        // Withdraw Button
-        document.getElementById('withdraw-btn').addEventListener('click', function() {
-            document.getElementById('withdraw-method').style.display = 'block';
-        });
-
-        // Cancel Withdraw
-        document.getElementById('cancel-withdraw').addEventListener('click', function() {
-            document.getElementById('withdraw-method').style.display = 'none';
-        });
-
-        // Confirm Withdraw
-        document.getElementById('confirm-withdraw').addEventListener('click', function() {
-            const method = document.getElementById('method-select').value;
-            const account = document.getElementById('account-number').value;
-            
-            if (account.trim() === '') {
-                alert('Please enter your account details');
-                return;
-            }
-            
-            addTransaction(`Withdraw $${balanceUSD.toFixed(4)} via ${method} to ${account}`);
-            balanceUSD = 0;
-            balanceBDT = 0;
-            watchedAds = 0;
-            
-            updateUI();
-            document.getElementById('withdraw-method').style.display = 'none';
-            alert('Withdrawal request submitted!');
-        });
-
-        // Transaction History Button
-        document.getElementById('transaction-btn').addEventListener('click', function() {
-            const historyDiv = document.getElementById('transaction-history');
-            historyDiv.style.display = historyDiv.style.display === 'none' ? 'block' : 'none';
-        });
-
-        // Close Popups
-        document.getElementById('close-success').addEventListener('click', function() {
-            document.getElementById('ad-success-popup').style.display = 'none';
-        });
-        
-        document.getElementById('close-fail').addEventListener('click', function() {
-            document.getElementById('ad-fail-popup').style.display = 'none';
-        });
-
-        // Start Ad Function
-        function startAd() {
-            document.getElementById('watch-ad-btn').disabled = true;
-            document.getElementById('ad-container').style.display = 'block';
-            secondsRemaining = 30;
-            updateTimerDisplay();
-            
-            adTimer = setInterval(function() {
-                secondsRemaining--;
-                updateTimerDisplay();
-                
-                if (secondsRemaining <= 0) {
-                    completeAd();
-                }
-            }, 1000);
-        }
-
-        // Update Timer Display
-        function updateTimerDisplay() {
-            document.getElementById('ad-timer').textContent = `${secondsRemaining} seconds remaining`;
-            const progressPercent = ((30 - secondsRemaining) / 30) * 100;
-            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
-            document.getElementById('progress-bar').textContent = `${Math.round(progressPercent)}%`;
-        }
-
-        // Complete Ad Viewing
-        function completeAd() {
-            clearInterval(adTimer);
-            document.getElementById('ad-container').style.display = 'none';
-            document.getElementById('watch-ad-btn').disabled = false;
-            
-            // Update balance
-            watchedAds++;
-            balanceUSD += usdPerAd;
-            balanceBDT += bdtPerAd;
-            
-            // Add transaction
-            addTransaction(`Earned $${usdPerAd.toFixed(4)} from watching ad`);
-            
-            // Update UI
-            updateUI();
-            
-            // Show success message
-            document.getElementById('ad-success-popup').style.display = 'block';
-        }
-
-        // Cancel Ad Viewing
-        function cancelAd() {
-            clearInterval(adTimer);
-            document.getElementById('ad-container').style.display = 'none';
-            document.getElementById('watch-ad-btn').disabled = false;
-            document.getElementById('progress-bar').style.width = '0%';
-            document.getElementById('progress-bar').textContent = '0%';
-            
-            // Show fail message
-            document.getElementById('ad-fail-popup').style.display = 'block';
-        }
-
-        // Add Transaction
-        function addTransaction(text) {
-            const now = new Date();
-            const timestamp = now.toLocaleString();
-            transactions.unshift(`${timestamp}: ${text}`);
-            
-            if (transactions.length > 10) {
-                transactions = transactions.slice(0, 10);
-            }
-            
-            localStorage.setItem("transactions", JSON.stringify(transactions));
-            updateTransactionList();
-        }
-
-        // Update Transaction List
-        function updateTransactionList() {
-            const list = document.getElementById('transaction-list');
-            list.innerHTML = '';
-            
-            transactions.forEach(transaction => {
-                const li = document.createElement('li');
-                li.textContent = transaction;
-                list.appendChild(li);
-            });
-        }
-
-        // Update UI
+        // UI Update functions
         function updateUI() {
-            document.getElementById('watched-ads').textContent = watchedAds;
-            document.getElementById('usd-balance').textContent = balanceUSD.toFixed(4);
-            document.getElementById('bdt-balance').textContent = balanceBDT.toFixed(2);
-            
-            // Enable/disable withdraw button
-            document.getElementById('withdraw-btn').disabled = balanceUSD < 2;
+            // Update balances
+            $('#watched-ads').text(userData.watchedAds);
+            $('#usd-balance').text(userData.balanceUSD.toFixed(4));
+            $('#bdt-balance').text(userData.balanceBDT.toFixed(2));
             
             // Update progress bar
-            const progressPercent = (balanceUSD / 2) * 100;
-            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
-            document.getElementById('progress-bar').textContent = `${Math.round(progressPercent)}%`;
+            const progressPercent = (userData.balanceUSD / config.withdrawalThreshold) * 100;
+            $('#progress-bar').css('width', progressPercent + '%').text(Math.round(progressPercent) + '%');
             
-            // Save to local storage
-            localStorage.setItem("watchedAds", watchedAds);
-            localStorage.setItem("balanceUSD", balanceUSD);
-            localStorage.setItem("balanceBDT", balanceBDT);
+            // Update withdraw button state
+            $('#withdraw-btn').prop('disabled', userData.balanceUSD < config.withdrawalThreshold);
             
-            // Update transaction list
+            // Update withdraw notice
+            if (userData.balanceUSD >= config.withdrawalThreshold) {
+                $('#withdraw-notice').removeClass('notice-error').addClass('notice-success')
+                    .html('<strong>Ready to withdraw!</strong> You can now withdraw your earnings.');
+            } else {
+                const needed = (config.withdrawalThreshold - userData.balanceUSD).toFixed(4);
+                $('#withdraw-notice').removeClass('notice-success').addClass('notice-error')
+                    .html(`<strong>Notice:</strong> You need $${needed} more to withdraw. Watch ${Math.ceil(parseFloat(needed)/config.earningsPerAd.usd)} more ads.`);
+            }
+            
             updateTransactionList();
         }
-
-        // Initialize transaction list
-        updateTransactionList();
+        
+        function updateTransactionList() {
+            const $list = $('#transaction-list').empty();
+            
+            userData.transactions.forEach(transaction => {
+                $list.append(`<li>${transaction}</li>`);
+            });
+        }
+        
+        function showLoading(show) {
+            $('#ad-loading').toggle(show);
+            $('#watch-ad-btn').prop('disabled', show);
+        }
+        
+        // Telegram username handling
+        function setupTelegramUsername() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('username') || 'User';
+            $('#user-info').text(`Welcome, ${username}!`);
+        }
+        
+        // Payment method handling
+        function setupPaymentMethods() {
+            $('.payment-option').click(function() {
+                $('.payment-option').removeClass('selected');
+                $(this).addClass('selected');
+                userData.selectedPaymentMethod = $(this).data('method');
+                
+                // Update placeholder based on selection
+                const placeholder = userData.selectedPaymentMethod === 'trc20' ? 
+                    'Enter your TRC20 wallet address' : 
+                    'Enter your account number';
+                $('#payment-details').attr('placeholder', placeholder);
+            });
+            
+            $('#confirm-payment').click(function() {
+                if (!userData.selectedPaymentMethod) {
+                    alert('Please select a payment method');
+                    return;
+                }
+                
+                const account = $('#payment-details').val().trim();
+                if (!account) {
+                    alert('Please enter your account details');
+                    return;
+                }
+                
+                // Process withdrawal
+                const methodInfo = config.paymentMethods[userData.selectedPaymentMethod];
+                const amount = userData.balanceUSD;
+                let note = `Via ${methodInfo.name} to ${account}`;
+                
+                if (methodInfo.fee > 0) {
+                    const fee = (amount * methodInfo.fee / 100).toFixed(4);
+                    note += ` (Fee: ${methodInfo.fee}% = $${fee})`;
+                }
+                
+                userData.addTransaction('Withdrawn', amount, note);
+                
+                // Reset balances
+                userData.watchedAds = 0;
+                userData.balanceUSD = 0;
+                userData.balanceBDT = 0;
+                userData.saveData();
+                
+                // Close dialog and update UI
+                $('#payment-dialog').hide();
+                updateUI();
+                
+                // Show success message
+                alert(`Withdrawal request submitted!\n$${amount.toFixed(4)} will be sent to your ${methodInfo.name} account within 24 hours.`);
+            });
+            
+            $('#cancel-payment').click(function() {
+                $('#payment-dialog').hide();
+            });
+        }
+        
+        // Event handlers
+        $('#watch-ad-btn').click(function() {
+            showLoading(true);
+            
+            // Show Monetag ad
+            show_9050013().then(() => {
+                // Ad watched successfully
+                userData.watchedAds++;
+                userData.balanceUSD += config.earningsPerAd.usd;
+                userData.balanceBDT += config.earningsPerAd.bdt;
+                
+                userData.addTransaction('Earned', config.earningsPerAd.usd);
+                userData.saveData();
+                
+                updateUI();
+                
+                // Show success message
+                $('<div class="notice notice-success">Success! You earned $' + 
+                  config.earningsPerAd.usd.toFixed(4) + '</div>')
+                    .insertAfter('#ad-loading')
+                    .delay(3000)
+                    .fadeOut(500, function() { $(this).remove(); });
+            }).catch(error => {
+                console.error('Ad error:', error);
+                
+                // Show error message
+                $('<div class="notice notice-error">Ad failed to load. Please try again.</div>')
+                    .insertAfter('#ad-loading')
+                    .delay(3000)
+                    .fadeOut(500, function() { $(this).remove(); });
+            }).finally(() => {
+                showLoading(false);
+            });
+        });
+        
+        $('#withdraw-btn').click(function() {
+            if (userData.balanceUSD >= config.withdrawalThreshold) {
+                $('#payment-details').val('');
+                $('.payment-option').removeClass('selected');
+                userData.selectedPaymentMethod = null;
+                $('#payment-dialog').show();
+            }
+        });
+        
+        $('#transaction-btn').click(function() {
+            $('#transaction-history').slideToggle();
+        });
+        
+        // Initialize payment methods
+        setupPaymentMethods();
     </script>
 </body>
 </html>
