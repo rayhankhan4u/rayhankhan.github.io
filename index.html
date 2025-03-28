@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -6,29 +6,32 @@
     <title>Watch for Earn</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     
-    <!-- Monetag Ad Script -->
+    <!-- Moneteg Ad Script -->
     <script src="//whephiwums.com/sdk.js" data-zone="9050013" data-sdk="show_9050013"></script>
-
+    
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
             margin-top: 50px;
-            background-color: #222;
+            background-color: #121212;
             color: white;
         }
-        #balance-container {
+        #welcome-message {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #4caf50;
+        }
+        #balance-container, #withdraw-notice {
             margin: 20px;
         }
         #withdraw-notice {
             color: red;
             font-size: 16px;
-            text-align: center;
-            margin-top: 10px;
         }
         .progress-bar {
             width: 100%;
-            background-color: #444;
+            background-color: #f3f3f3;
             border-radius: 25px;
             overflow: hidden;
             margin-top: 20px;
@@ -47,11 +50,7 @@
             color: white;
             font-size: 16px;
             cursor: pointer;
-            margin-top: 10px;
-            display: block;
-            width: 80%;
-            margin-left: auto;
-            margin-right: auto;
+            margin-top: 20px;
         }
         button:disabled {
             background-color: gray;
@@ -66,6 +65,8 @@
             margin-right: auto;
             text-align: left;
             display: none;
+            background: white;
+            color: black;
         }
         #developer {
             font-size: 18px;
@@ -76,13 +77,39 @@
         #developer span {
             color: #ff5722;
         }
-        #how-to-watch {
-            background-color: #ff9800;
+        #ad-notice {
+            color: yellow;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+        #withdraw-method {
+            display: none;
+            margin-top: 20px;
+        }
+        #withdraw-method select, #withdraw-method input {
+            padding: 8px;
+            margin: 5px;
+            width: 80%;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #333;
+            padding: 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            color: white;
         }
     </style>
 </head>
 <body>
-
+    <div id="welcome-message">
+        Welcome, <span id="user-name">User</span>!
+    </div>
+    
     <h1>Watch for Earn</h1>
     
     <div id="balance-container">
@@ -92,7 +119,11 @@
     </div>
 
     <div id="withdraw-notice">
-        <strong>Notice:</strong> The Withdraw button will be disabled until you have sufficient balance of $2 or equivalent in BDT.
+        <strong>Notice:</strong> The Withdraw button will be disabled until you have a balance of $2 or equivalent in BDT.
+    </div>
+
+    <div id="ad-notice">
+        <strong>Ad Viewing Rules:</strong> After clicking the 'Watch Ad' button, wait for the ad interface to load. Then, click the <strong>'Continue'</strong> button and wait <strong>30 seconds</strong> on the redirected page. If you leave early, your balance will not be updated.
     </div>
 
     <div class="progress-bar">
@@ -100,9 +131,20 @@
     </div>
 
     <button id="watch-ad-btn">Watch Ad</button>
-    <button id="how-to-watch">How to Watch Ads?</button>
     <button id="withdraw-btn" disabled>Withdraw</button>
     <button id="transaction-btn">Transaction History</button>
+
+    <div id="withdraw-method">
+        <h3>Withdrawal Method</h3>
+        <select id="method-select">
+            <option value="bkash">Bkash (Personal)</option>
+            <option value="nagad">Nagad (Personal)</option>
+            <option value="trc20">TRC20 (USDT)</option>
+        </select>
+        <input type="text" id="account-number" placeholder="Account Number/TRC20 Address">
+        <button id="confirm-withdraw">Confirm Withdrawal</button>
+        <button id="cancel-withdraw">Cancel</button>
+    </div>
 
     <div id="transaction-history">
         <h3>Transaction History</h3>
@@ -113,96 +155,37 @@
         Developed by <span>Rayhan</span>
     </div>
 
+    <div id="ad-success-popup" class="popup">
+        <h3>Success!</h3>
+        <p>You have successfully watched the ad and earned $0.0035.</p>
+        <button id="close-success">OK</button>
+    </div>
+
+    <div id="ad-fail-popup" class="popup">
+        <h3>Failed!</h3>
+        <p>You didn't complete watching the ad. Please stay on the ad page for at least 30 seconds to earn.</p>
+        <button id="close-fail">OK</button>
+    </div>
+
     <script>
+        // Balance Data Saved in Local Storage
         var watchedAds = localStorage.getItem("watchedAds") ? parseInt(localStorage.getItem("watchedAds")) : 0;
         var balanceUSD = localStorage.getItem("balanceUSD") ? parseFloat(localStorage.getItem("balanceUSD")) : 0;
         var balanceBDT = localStorage.getItem("balanceBDT") ? parseFloat(localStorage.getItem("balanceBDT")) : 0;
         var transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+        var adStartTime = 0;
 
+        // Constants
         var usdPerAd = 0.0035;
-        var bdtPerAd = 0.35;
-        var maxAds = 571; // $2 / 0.0035 = 571 ads required
+        var bdtPerAd = 0.35; // Assuming 1 USD = 100 BDT
+        var maxAds = Math.ceil(2 / usdPerAd); // Calculate ads needed for $2
+        var requiredAdTime = 30000; // 30 seconds in milliseconds
 
-        function updateProgress() {
-            var percentage = (watchedAds / maxAds) * 100;
-            $("#progress-bar").css("width", percentage + "%").text(Math.floor(percentage) + "%");
+        // Get Telegram username from URL parameters
+        function getTelegramUsername() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('username') || 'User';
         }
 
-        function updateBalance() {
-            $("#usd-balance").text(balanceUSD.toFixed(4));
-            $("#bdt-balance").text(balanceBDT.toFixed(2));
-            $("#watched-ads").text(watchedAds);
-
-            if (balanceUSD >= 2) {
-                $("#withdraw-btn").prop("disabled", false);
-            } else {
-                $("#withdraw-btn").prop("disabled", true);
-            }
-        }
-
-        function updateTransactionHistory() {
-            $("#transaction-list").empty();
-            transactions.forEach(tx => {
-                $("#transaction-list").append("<li>" + tx + "</li>");
-            });
-        }
-
-        updateBalance();
-        updateProgress();
-        updateTransactionHistory();
-
-        $("#watch-ad-btn").click(function() {
-            if (watchedAds < maxAds) {
-                show_9050013().then(() => {
-                    watchedAds++;
-                    balanceUSD += usdPerAd;
-                    balanceBDT += bdtPerAd;
-
-                    localStorage.setItem("watchedAds", watchedAds);
-                    localStorage.setItem("balanceUSD", balanceUSD);
-                    localStorage.setItem("balanceBDT", balanceBDT);
-
-                    updateProgress();
-                    updateBalance();
-                }).catch((e) => {
-                    console.error("Error showing ad:", e);
-                });
-            }
-        });
-
-        $("#withdraw-btn").click(function() {
-            if (balanceUSD >= 2) {
-                var withdrawMessage = "Your withdrawal request of $" + balanceUSD.toFixed(4) + " has been submitted.\nYou will receive your payment within 24 hours.";
-                alert(withdrawMessage);
-
-                transactions.push("Withdrawn: $" + balanceUSD.toFixed(4) + " (৳" + balanceBDT.toFixed(2) + ") on " + new Date().toLocaleString());
-                localStorage.setItem("transactions", JSON.stringify(transactions));
-
-                watchedAds = 0;
-                balanceUSD = 0;
-                balanceBDT = 0;
-
-                localStorage.setItem("watchedAds", watchedAds);
-                localStorage.setItem("balanceUSD", balanceUSD);
-                localStorage.setItem("balanceBDT", balanceBDT);
-
-                updateProgress();
-                updateBalance();
-                updateTransactionHistory();
-            } else {
-                alert("You need more balance to withdraw.");
-            }
-        });
-
-        $("#transaction-btn").click(function() {
-            $("#transaction-history").toggle();
-        });
-
-        $("#how-to-watch").click(function() {
-            window.open("https://youtube.com/shorts/hj2I3sbsg54?si=93BN251gtHefmi-k", "_blank");
-        });
-
-    </script>
-
-</body>
-</html>
+        // Set welcome message with Telegram username
+        document.getElementById('user-name').textContent
