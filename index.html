@@ -119,9 +119,9 @@
         var balanceBDT = localStorage.getItem("balanceBDT") ? parseFloat(localStorage.getItem("balanceBDT")) : 0;
         var transactions = JSON.parse(localStorage.getItem("transactions")) || [];
 
-        var usdPerAd = 0.005;
-        var bdtPerAd = 0.50;
-        var maxAds = 400;
+        var usdPerAd = 0.0035;
+        var bdtPerAd = 0.35;
+        var maxAds = 571; // $2 / 0.0035 = 571 ads required
 
         function updateProgress() {
             var percentage = (watchedAds / maxAds) * 100;
@@ -129,7 +129,7 @@
         }
 
         function updateBalance() {
-            $("#usd-balance").text(balanceUSD.toFixed(3));
+            $("#usd-balance").text(balanceUSD.toFixed(4));
             $("#bdt-balance").text(balanceBDT.toFixed(2));
             $("#watched-ads").text(watchedAds);
 
@@ -172,10 +172,10 @@
 
         $("#withdraw-btn").click(function() {
             if (balanceUSD >= 2) {
-                var withdrawMessage = "Your withdrawal request of $" + balanceUSD.toFixed(3) + " has been submitted.\nYou will receive your payment within 24 hours.";
+                var withdrawMessage = "Your withdrawal request of $" + balanceUSD.toFixed(4) + " has been submitted.\nYou will receive your payment within 24 hours.";
                 alert(withdrawMessage);
 
-                transactions.push("Withdrawn: $" + balanceUSD.toFixed(3) + " (৳" + balanceBDT.toFixed(2) + ") on " + new Date().toLocaleString());
+                transactions.push("Withdrawn: $" + balanceUSD.toFixed(4) + " (৳" + balanceBDT.toFixed(2) + ") on " + new Date().toLocaleString());
                 localStorage.setItem("transactions", JSON.stringify(transactions));
 
                 watchedAds = 0;
