@@ -1,14 +1,10 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Watch for Earn</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    
-    <!-- Moneteg Ad Script -->
-    <script src="//whephiwums.com/sdk.js" data-zone="9050013" data-sdk="show_9050013"></script>
-    
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -103,6 +99,31 @@
             z-index: 1000;
             color: white;
         }
+        #ad-container {
+            margin: 20px auto;
+            width: 300px;
+            height: 250px;
+            background-color: #333;
+            display: none;
+            position: relative;
+        }
+        #ad-close-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: red;
+            color: white;
+            border: none;
+            padding: 2px 5px;
+            cursor: pointer;
+        }
+        #ad-timer {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: white;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -123,7 +144,7 @@
     </div>
 
     <div id="ad-notice">
-        <strong>Ad Viewing Rules:</strong> After clicking the 'Watch Ad' button, wait for the ad interface to load. Then, click the <strong>'Continue'</strong> button and wait <strong>30 seconds</strong> on the redirected page. If you leave early, your balance will not be updated.
+        <strong>Ad Viewing Rules:</strong> After clicking the 'Watch Ad' button, wait for the ad to finish (30 seconds). Do not close the ad early or you won't get paid.
     </div>
 
     <div class="progress-bar">
@@ -133,6 +154,12 @@
     <button id="watch-ad-btn">Watch Ad</button>
     <button id="withdraw-btn" disabled>Withdraw</button>
     <button id="transaction-btn">Transaction History</button>
+
+    <div id="ad-container">
+        <button id="ad-close-btn">X</button>
+        <div id="ad-content">Advertisement</div>
+        <div id="ad-timer">30 seconds remaining</div>
+    </div>
 
     <div id="withdraw-method">
         <h3>Withdrawal Method</h3>
@@ -163,23 +190,26 @@
 
     <div id="ad-fail-popup" class="popup">
         <h3>Failed!</h3>
-        <p>You didn't complete watching the ad. Please stay on the ad page for at least 30 seconds to earn.</p>
+        <p>You didn't complete watching the ad. Please watch the full ad to earn.</p>
         <button id="close-fail">OK</button>
     </div>
 
     <script>
         // Balance Data Saved in Local Storage
-        var watchedAds = localStorage.getItem("watchedAds") ? parseInt(localStorage.getItem("watchedAds")) : 0;
-        var balanceUSD = localStorage.getItem("balanceUSD") ? parseFloat(localStorage.getItem("balanceUSD")) : 0;
-        var balanceBDT = localStorage.getItem("balanceBDT") ? parseFloat(localStorage.getItem("balanceBDT")) : 0;
-        var transactions = JSON.parse(localStorage.getItem("transactions")) || [];
-        var adStartTime = 0;
+        let watchedAds = localStorage.getItem("watchedAds") ? parseInt(localStorage.getItem("watchedAds")) : 0;
+        let balanceUSD = localStorage.getItem("balanceUSD") ? parseFloat(localStorage.getItem("balanceUSD")) : 0;
+        let balanceBDT = localStorage.getItem("balanceBDT") ? parseFloat(localStorage.getItem("balanceBDT")) : 0;
+        let transactions = JSON.parse(localStorage.getItem("transactions")) || [];
+        let adTimer;
+        let secondsRemaining = 30;
 
         // Constants
-        var usdPerAd = 0.0035;
-        var bdtPerAd = 0.35; // Assuming 1 USD = 100 BDT
-        var maxAds = Math.ceil(2 / usdPerAd); // Calculate ads needed for $2
-        var requiredAdTime = 30000; // 30 seconds in milliseconds
+        const usdPerAd = 0.0035;
+        const bdtPerAd = 0.35; // Assuming 1 USD = 100 BDT
+        const requiredAdTime = 30; // 30 seconds
+
+        // Initialize UI
+        updateUI();
 
         // Get Telegram username from URL parameters
         function getTelegramUsername() {
@@ -188,4 +218,172 @@
         }
 
         // Set welcome message with Telegram username
-        document.getElementById('user-name').textContent
+        document.getElementById('user-name').textContent = getTelegramUsername();
+
+        // Watch Ad Button Click Event
+        document.getElementById('watch-ad-btn').addEventListener('click', function() {
+            startAd();
+        });
+
+        // Close Ad Button
+        document.getElementById('ad-close-btn').addEventListener('click', function() {
+            cancelAd();
+        });
+
+        // Withdraw Button
+        document.getElementById('withdraw-btn').addEventListener('click', function() {
+            document.getElementById('withdraw-method').style.display = 'block';
+        });
+
+        // Cancel Withdraw
+        document.getElementById('cancel-withdraw').addEventListener('click', function() {
+            document.getElementById('withdraw-method').style.display = 'none';
+        });
+
+        // Confirm Withdraw
+        document.getElementById('confirm-withdraw').addEventListener('click', function() {
+            const method = document.getElementById('method-select').value;
+            const account = document.getElementById('account-number').value;
+            
+            if (account.trim() === '') {
+                alert('Please enter your account details');
+                return;
+            }
+            
+            addTransaction(`Withdraw $${balanceUSD.toFixed(4)} via ${method} to ${account}`);
+            balanceUSD = 0;
+            balanceBDT = 0;
+            watchedAds = 0;
+            
+            updateUI();
+            document.getElementById('withdraw-method').style.display = 'none';
+            alert('Withdrawal request submitted!');
+        });
+
+        // Transaction History Button
+        document.getElementById('transaction-btn').addEventListener('click', function() {
+            const historyDiv = document.getElementById('transaction-history');
+            historyDiv.style.display = historyDiv.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Close Popups
+        document.getElementById('close-success').addEventListener('click', function() {
+            document.getElementById('ad-success-popup').style.display = 'none';
+        });
+        
+        document.getElementById('close-fail').addEventListener('click', function() {
+            document.getElementById('ad-fail-popup').style.display = 'none';
+        });
+
+        // Start Ad Function
+        function startAd() {
+            document.getElementById('watch-ad-btn').disabled = true;
+            document.getElementById('ad-container').style.display = 'block';
+            secondsRemaining = 30;
+            updateTimerDisplay();
+            
+            adTimer = setInterval(function() {
+                secondsRemaining--;
+                updateTimerDisplay();
+                
+                if (secondsRemaining <= 0) {
+                    completeAd();
+                }
+            }, 1000);
+        }
+
+        // Update Timer Display
+        function updateTimerDisplay() {
+            document.getElementById('ad-timer').textContent = `${secondsRemaining} seconds remaining`;
+            const progressPercent = ((30 - secondsRemaining) / 30) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+            document.getElementById('progress-bar').textContent = `${Math.round(progressPercent)}%`;
+        }
+
+        // Complete Ad Viewing
+        function completeAd() {
+            clearInterval(adTimer);
+            document.getElementById('ad-container').style.display = 'none';
+            document.getElementById('watch-ad-btn').disabled = false;
+            
+            // Update balance
+            watchedAds++;
+            balanceUSD += usdPerAd;
+            balanceBDT += bdtPerAd;
+            
+            // Add transaction
+            addTransaction(`Earned $${usdPerAd.toFixed(4)} from watching ad`);
+            
+            // Update UI
+            updateUI();
+            
+            // Show success message
+            document.getElementById('ad-success-popup').style.display = 'block';
+        }
+
+        // Cancel Ad Viewing
+        function cancelAd() {
+            clearInterval(adTimer);
+            document.getElementById('ad-container').style.display = 'none';
+            document.getElementById('watch-ad-btn').disabled = false;
+            document.getElementById('progress-bar').style.width = '0%';
+            document.getElementById('progress-bar').textContent = '0%';
+            
+            // Show fail message
+            document.getElementById('ad-fail-popup').style.display = 'block';
+        }
+
+        // Add Transaction
+        function addTransaction(text) {
+            const now = new Date();
+            const timestamp = now.toLocaleString();
+            transactions.unshift(`${timestamp}: ${text}`);
+            
+            if (transactions.length > 10) {
+                transactions = transactions.slice(0, 10);
+            }
+            
+            localStorage.setItem("transactions", JSON.stringify(transactions));
+            updateTransactionList();
+        }
+
+        // Update Transaction List
+        function updateTransactionList() {
+            const list = document.getElementById('transaction-list');
+            list.innerHTML = '';
+            
+            transactions.forEach(transaction => {
+                const li = document.createElement('li');
+                li.textContent = transaction;
+                list.appendChild(li);
+            });
+        }
+
+        // Update UI
+        function updateUI() {
+            document.getElementById('watched-ads').textContent = watchedAds;
+            document.getElementById('usd-balance').textContent = balanceUSD.toFixed(4);
+            document.getElementById('bdt-balance').textContent = balanceBDT.toFixed(2);
+            
+            // Enable/disable withdraw button
+            document.getElementById('withdraw-btn').disabled = balanceUSD < 2;
+            
+            // Update progress bar
+            const progressPercent = (balanceUSD / 2) * 100;
+            document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+            document.getElementById('progress-bar').textContent = `${Math.round(progressPercent)}%`;
+            
+            // Save to local storage
+            localStorage.setItem("watchedAds", watchedAds);
+            localStorage.setItem("balanceUSD", balanceUSD);
+            localStorage.setItem("balanceBDT", balanceBDT);
+            
+            // Update transaction list
+            updateTransactionList();
+        }
+
+        // Initialize transaction list
+        updateTransactionList();
+    </script>
+</body>
+</html>
