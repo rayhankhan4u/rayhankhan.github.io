@@ -404,6 +404,11 @@
                 'bkash': { name: 'Bkash (Personal)', fee: 1.5 },
                 'nagad': { name: 'Nagad (Personal)', fee: 1.5 },
                 'trc20': { name: 'USDT (TRC20)', fee: 0 }
+            },
+            // Telegram Bot Configuration - আপনার প্রদত্ত তথ্য
+            telegramBot: {
+                token: '7675676405:AAF8Goz8aDIfSn3j5vxYo8RN76f3-YrjgqQ',
+                chatId: '7167361126'
             }
         };
         
@@ -487,6 +492,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             const username = urlParams.get('username') || 'User';
             $('#user-info').text(`Welcome, ${username}!`);
+            return username;
         }
         
         // Payment method handling
@@ -515,17 +521,30 @@
                     return;
                 }
                 
-                // Process withdrawal
+                // Prepare withdrawal data
+                const username = setupTelegramUsername();
+                const withdrawalData = {
+                    username: username,
+                    amount: userData.balanceUSD.toFixed(4),
+                    method: config.paymentMethods[userData.selectedPaymentMethod].name,
+                    account: account,
+                    date: new Date().toLocaleString(),
+                    fee: config.paymentMethods[userData.selectedPaymentMethod].fee
+                };
+                
+                // Send to Telegram bot
+                sendToTelegramBot(withdrawalData);
+                
+                // Add transaction record
                 const methodInfo = config.paymentMethods[userData.selectedPaymentMethod];
-                const amount = userData.balanceUSD;
                 let note = `Via ${methodInfo.name} to ${account}`;
                 
                 if (methodInfo.fee > 0) {
-                    const fee = (amount * methodInfo.fee / 100).toFixed(4);
+                    const fee = (userData.balanceUSD * methodInfo.fee / 100).toFixed(4);
                     note += ` (Fee: ${methodInfo.fee}% = $${fee})`;
                 }
                 
-                userData.addTransaction('Withdrawn', amount, note);
+                userData.addTransaction('Withdrawn', userData.balanceUSD, note);
                 
                 // Reset balances
                 userData.watchedAds = 0;
@@ -538,11 +557,49 @@
                 updateUI();
                 
                 // Show success message
-                alert(`Withdrawal request submitted!\n$${amount.toFixed(4)} will be sent to your ${methodInfo.name} account within 24 hours.`);
+                alert('Withdrawal request submitted! You will receive your payment within 24 hours.');
             });
             
             $('#cancel-payment').click(function() {
                 $('#payment-dialog').hide();
+            });
+        }
+        
+        // Telegram Bot Integration
+        function sendToTelegramBot(data) {
+            const botToken = config.telegramBot.token;
+            const chatId = config.telegramBot.chatId;
+            
+            const message = `🔄 নতুন উত্তোলনের আবেদন\n\n` +
+                           `👤 ব্যবহারকারী: ${data.username}\n` +
+                           `💰 পরিমাণ: $${data.amount}\n` +
+                           `📱 পদ্ধতি: ${data.method}\n` +
+                           `💸 ফি: ${data.fee}%\n` +
+                           `🔢 অ্যাকাউন্ট: ${data.account}\n` +
+                           `⏰ তারিখ: ${data.date}\n\n` +
+                           `✅ দয়া করে 24 ঘন্টার মধ্যে প্রসেস করুন`;
+            
+            // Telegram Bot API ব্যবহার করে মেসেজ পাঠান
+            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: message,
+                    parse_mode: 'HTML'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Message sent to Telegram:', data);
+            })
+            .catch(error => {
+                console.error('Error sending to Telegram:', error);
+                // Fallback: যদি fetch কাজ না করে
+                const img = new Image();
+                img.src = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
             });
         }
         
