@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ludo Champions | Developed by Rayhan</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
     <style>
         :root {
             --red: #FF5252;
@@ -15,13 +14,8 @@
             --dark-green: #388E3C;
             --dark-yellow: #FFA000;
             --dark-blue: #1976D2;
-            --gold: #FFD700;
-            --silver: #C0C0C0;
-            --bg-gradient: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            --text-light: #FFFFFF;
-            --text-dark: #333333;
-            --shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --board-bg: #0e2a5a;
+            --board-border: #1a3a7a;
         }
 
         * {
@@ -32,309 +26,120 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text-light);
-            overflow: hidden;
-            height: 100vh;
-            touch-action: manipulation;
-        }
-
-        /* Loading Screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--bg-gradient);
+            font-family: Arial, sans-serif;
+            background: #0a1a3a;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            transition: opacity 0.8s ease-out;
-        }
-
-        .loading-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transform: translateY(-50px);
-        }
-
-        .ludo-logo {
-            width: 180px;
-            height: 180px;
-            margin-bottom: 30px;
-            position: relative;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .ludo-logo img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        .game-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 700;
-            background: linear-gradient(to right, #FFD700, #FFFFFF, #FFD700);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
-
-        .loading-bar-container {
-            width: 300px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
+            height: 100vh;
             overflow: hidden;
-            margin: 30px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .loading-bar {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, #FFD700, #FFFFFF);
-            border-radius: 10px;
-            transition: width 0.3s ease;
+            position: relative;
         }
 
         .developer-credit {
-            font-size: 1.2rem;
-            font-style: italic;
-            color: rgba(255, 255, 255, 0.8);
-            margin-top: 20px;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
             position: absolute;
-            bottom: 30px;
-        }
-
-        /* Home Screen */
-        .home-screen {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            padding: 20px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background: url('https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-1.2.1&auto=format&fit=crop&w=1351&q=80') no-repeat center center;
-            background-size: cover;
-            position: relative;
-        }
-
-        .home-screen::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 0;
-        }
-
-        .home-content {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 800px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .home-logo {
-            width: 150px;
-            height: 150px;
-            margin-bottom: 20px;
-            animation: pulse 2s infinite;
-        }
-
-        .home-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--gold);
-            margin-bottom: 10px;
-            text-shadow: 0 3px 6px rgba(0, 0, 0, 0.5);
-            text-align: center;
-        }
-
-        .home-subtitle {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 40px;
-            text-align: center;
-        }
-
-        .game-options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            width: 100%;
-            max-width: 500px;
-            margin-bottom: 30px;
-        }
-
-        .game-option {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 25px 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: var(--shadow);
-        }
-
-        .game-option:hover {
-            transform: translateY(-5px);
-            background: rgba(255, 255, 255, 0.2);
-            border-color: var(--gold);
-        }
-
-        .option-icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            color: var(--gold);
-        }
-
-        .option-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            margin-bottom: 5px;
-            color: white;
-        }
-
-        .option-desc {
-            font-size: 0.9rem;
+            bottom: 10px;
+            right: 10px;
             color: rgba(255, 255, 255, 0.7);
-            text-align: center;
+            font-size: 14px;
+            font-style: italic;
         }
 
-        /* Game Container */
         .game-container {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .game-header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 15px;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 15px;
-            backdrop-filter: blur(5px);
-            margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-            z-index: 10;
-        }
-
-        .player-info {
-            display: flex;
-            align-items: center;
-        }
-
-        .player-color {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            margin-right: 10px;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-        }
-
-        .player-turn {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .game-stats {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .stat-box {
-            display: flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 5px 10px;
-            border-radius: 20px;
-        }
-
-        .stat-icon {
-            margin-right: 5px;
-            font-size: 1rem;
-        }
-
-        .stat-value {
-            font-weight: 600;
-        }
-
-        .game-board-container {
             position: relative;
             width: 95vmin;
             height: 95vmin;
             max-width: 600px;
             max-height: 600px;
-            margin: 0 auto;
+        }
+
+        .game-header {
+            position: absolute;
+            top: -50px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            color: white;
+            font-weight: bold;
         }
 
         .game-board {
             width: 100%;
             height: 100%;
-            background-image: url('https://i.imgur.com/JQZ0QjP.png');
-            background-size: cover;
-            background-position: center;
+            background-color: var(--board-bg);
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            border: 8px solid var(--board-border);
             position: relative;
-            overflow: hidden;
             display: grid;
             grid-template-columns: repeat(15, 1fr);
             grid-template-rows: repeat(15, 1fr);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
         }
 
-        .board-cell {
-            position: relative;
+        /* Player Bases */
+        .player-base {
+            position: absolute;
+            width: 30%;
+            height: 30%;
+            border-radius: 15px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
             display: flex;
             justify-content: center;
             align-items: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .player-base.top-left {
+            top: 5%;
+            left: 5%;
+            background-color: var(--red);
+        }
+
+        .player-base.top-right {
+            top: 5%;
+            right: 5%;
+            background-color: var(--green);
+        }
+
+        .player-base.bottom-left {
+            bottom: 5%;
+            left: 5%;
+            background-color: var(--yellow);
+        }
+
+        .player-base.bottom-right {
+            bottom: 5%;
+            right: 5%;
+            background-color: var(--blue);
+        }
+
+        /* Center Area */
+        .center-area {
+            grid-column: 6 / 10;
+            grid-row: 6 / 10;
+            background: radial-gradient(circle, #1a3a7a, #0e2a5a);
+            border-radius: 15px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Board Cells */
+        .board-cell {
+            position: relative;
         }
 
         .path-cell {
             position: relative;
         }
 
-        .home-cell {
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+        .red-path { background-color: rgba(255, 82, 82, 0.3); }
+        .green-path { background-color: rgba(76, 175, 80, 0.3); }
+        .yellow-path { background-color: rgba(255, 214, 0, 0.3); }
+        .blue-path { background-color: rgba(33, 150, 243, 0.3); }
 
         .safe-cell {
             position: relative;
@@ -347,16 +152,9 @@
             height: 40%;
             background-color: white;
             border-radius: 50%;
+            top: 30%;
+            left: 30%;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-        }
-
-        .center-star {
-            width: 80%;
-            height: 80%;
-            background: radial-gradient(circle, #FFD700 0%, #FFA500 100%);
-            clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
-            box-shadow: 0 0 20px #FFD700;
-            animation: glow 2s infinite alternate;
         }
 
         /* Tokens */
@@ -365,54 +163,45 @@
             height: 80%;
             border-radius: 50%;
             position: absolute;
+            top: 10%;
+            left: 10%;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.68, -0.6, 0.32, 1.6);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+            border: 2px solid white;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 5;
-        }
-
-        .token::after {
-            content: '';
-            position: absolute;
-            width: 30%;
-            height: 30%;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
-            top: 15%;
-            left: 15%;
+            font-weight: bold;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
         }
 
         .token.red {
             background: radial-gradient(circle at 30% 30%, var(--red), var(--dark-red));
-            border: 3px solid #fff;
         }
 
         .token.green {
             background: radial-gradient(circle at 30% 30%, var(--green), var(--dark-green));
-            border: 3px solid #fff;
         }
 
         .token.yellow {
             background: radial-gradient(circle at 30% 30%, var(--yellow), var(--dark-yellow));
-            border: 3px solid #fff;
         }
 
         .token.blue {
             background: radial-gradient(circle at 30% 30%, var(--blue), var(--dark-blue));
-            border: 3px solid #fff;
         }
 
         .token.highlight {
-            animation: pulse 1.5s infinite, float 2s ease-in-out infinite;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
-            transform: scale(1.1);
+            animation: pulse 1s infinite;
+            box-shadow: 0 0 10px white;
         }
 
-        .token.captured {
-            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
 
         /* Dice */
@@ -421,390 +210,132 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            width: 80px;
-            height: 80px;
-            perspective: 1000px;
-            z-index: 10;
-        }
-
-        .dice {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            transform-style: preserve-3d;
-            transition: transform 1s ease;
-            cursor: pointer;
-        }
-
-        .dice-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 15px;
+            width: 70px;
+            height: 70px;
             background: white;
-            border: 3px solid #eee;
+            border-radius: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
+            font-size: 30px;
+            font-weight: bold;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            z-index: 10;
         }
-
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: #333;
-            position: absolute;
-        }
-
-        /* Dice faces */
-        .face-1 { transform: rotateY(0deg) translateZ(40px); }
-        .face-2 { transform: rotateY(90deg) translateZ(40px); }
-        .face-3 { transform: rotateX(90deg) translateZ(40px); }
-        .face-4 { transform: rotateX(-90deg) translateZ(40px); }
-        .face-5 { transform: rotateY(-90deg) translateZ(40px); }
-        .face-6 { transform: rotateY(180deg) translateZ(40px); }
 
         /* Game Controls */
         .game-controls {
+            position: absolute;
+            bottom: -50px;
+            width: 100%;
             display: flex;
             justify-content: center;
-            gap: 15px;
-            margin-top: 15px;
-            width: 100%;
-            z-index: 10;
+            gap: 10px;
         }
 
         .control-btn {
-            padding: 12px 25px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 50px;
+            padding: 8px 15px;
+            background: #1a3a7a;
             color: white;
-            font-weight: 600;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
         }
 
-        .control-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-3px);
-        }
-
-        .control-btn i {
-            font-size: 1.2rem;
-        }
-
-        /* Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
-            70% { transform: scale(1.05); box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); }
-            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
-        }
-
-        @keyframes glow {
-            from { box-shadow: 0 0 10px #FFD700; }
-            to { box-shadow: 0 0 30px #FFD700; }
-        }
-
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-
-        @keyframes diceRoll {
-            0% { transform: rotateX(0) rotateY(0) rotateZ(0); }
-            100% { transform: rotateX(720deg) rotateY(360deg) rotateZ(180deg); }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .game-title {
-                font-size: 2.5rem;
-            }
-            
-            .home-title {
-                font-size: 2.2rem;
-            }
-            
-            .game-options {
-                grid-template-columns: 1fr;
-            }
-            
-            .dice-container {
-                width: 70px;
-                height: 70px;
-            }
-            
-            .token {
-                width: 70%;
-                height: 70%;
-            }
-        }
-
-        /* Font Awesome Icons */
-        .fas {
-            font-family: 'Font Awesome';
+        /* Message Popup */
+        .message-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 100;
+            display: none;
+            max-width: 80%;
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loading-screen">
-        <div class="loading-content">
-            <div class="ludo-logo">
-                <img src="https://i.imgur.com/JQZ0QjP.png" alt="Ludo Champions Logo">
-            </div>
-            <h1 class="game-title">LUDO CHAMPIONS</h1>
-            <div class="loading-bar-container">
-                <div class="loading-bar" id="loadingBar"></div>
-            </div>
-            <div class="developer-credit">Developed by Rayhan</div>
-        </div>
-    </div>
-
-    <!-- Home Screen -->
-    <div class="home-screen">
-        <div class="home-content">
-            <img src="https://i.imgur.com/JQZ0QjP.png" alt="Ludo Champions" class="home-logo">
-            <h1 class="home-title">LUDO CHAMPIONS</h1>
-            <p class="home-subtitle">The ultimate royal battle of strategy and luck</p>
-            
-            <div class="game-options">
-                <div class="game-option" id="singlePlayerBtn">
-                    <div class="option-icon"><i class="fas fa-user"></i></div>
-                    <h3 class="option-title">Single Player</h3>
-                    <p class="option-desc">Play against AI opponents</p>
-                </div>
-                
-                <div class="game-option" id="multiplayerBtn">
-                    <div class="option-icon"><i class="fas fa-users"></i></div>
-                    <h3 class="option-title">Multiplayer</h3>
-                    <p class="option-desc">Play with friends locally</p>
-                </div>
-                
-                <div class="game-option" id="howToPlayBtn">
-                    <div class="option-icon"><i class="fas fa-question-circle"></i></div>
-                    <h3 class="option-title">How to Play</h3>
-                    <p class="option-desc">Learn the rules</p>
-                </div>
-                
-                <div class="game-option" id="settingsBtn">
-                    <div class="option-icon"><i class="fas fa-cog"></i></div>
-                    <h3 class="option-title">Settings</h3>
-                    <p class="option-desc">Game preferences</p>
-                </div>
-            </div>
-            
-            <div class="developer-credit">Developed by Rayhan</div>
-        </div>
-    </div>
-
-    <!-- Game Container -->
+    <div class="developer-credit">Developed by Rayhan</div>
+    
     <div class="game-container">
         <div class="game-header">
-            <div class="player-info">
-                <div class="player-color red"></div>
-                <div class="player-turn">Red's Turn</div>
-            </div>
+            <div class="turn-display">Player: <span id="currentPlayer">Red</span></div>
+            <div class="roll-count">Rolls: <span id="rollCount">0</span></div>
+        </div>
+        
+        <!-- Player Bases -->
+        <div class="player-base top-left">P1</div>
+        <div class="player-base top-right">P2</div>
+        <div class="player-base bottom-left">P3</div>
+        <div class="player-base bottom-right">P4</div>
+        
+        <!-- Game Board -->
+        <div class="game-board" id="gameBoard">
+            <!-- Center Area -->
+            <div class="center-area"></div>
             
-            <div class="game-stats">
-                <div class="stat-box">
-                    <div class="stat-icon"><i class="fas fa-dice"></i></div>
-                    <div class="stat-value" id="rollCount">0</div>
-                </div>
-                
-                <div class="stat-box">
-                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
-                    <div class="stat-value" id="gameTime">0:00</div>
-                </div>
-            </div>
+            <!-- Board cells will be generated by JavaScript -->
         </div>
         
-        <div class="game-board-container">
-            <div class="game-board" id="gameBoard">
-                <!-- Board cells will be generated by JavaScript -->
-            </div>
+        <!-- Dice -->
+        <div class="dice-container" id="dice">
+            <div id="diceValue">0</div>
         </div>
         
-        <div class="dice-container">
-            <div class="dice" id="dice">
-                <div class="dice-face face-1">
-                    <div class="dot" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-                </div>
-                <div class="dice-face face-2">
-                    <div class="dot" style="top: 25%; left: 25%;"></div>
-                    <div class="dot" style="bottom: 25%; right: 25%;"></div>
-                </div>
-                <div class="dice-face face-3">
-                    <div class="dot" style="top: 25%; left: 25%;"></div>
-                    <div class="dot" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-                    <div class="dot" style="bottom: 25%; right: 25%;"></div>
-                </div>
-                <div class="dice-face face-4">
-                    <div class="dot" style="top: 25%; left: 25%;"></div>
-                    <div class="dot" style="top: 25%; right: 25%;"></div>
-                    <div class="dot" style="bottom: 25%; left: 25%;"></div>
-                    <div class="dot" style="bottom: 25%; right: 25%;"></div>
-                </div>
-                <div class="dice-face face-5">
-                    <div class="dot" style="top: 25%; left: 25%;"></div>
-                    <div class="dot" style="top: 25%; right: 25%;"></div>
-                    <div class="dot" style="top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-                    <div class="dot" style="bottom: 25%; left: 25%;"></div>
-                    <div class="dot" style="bottom: 25%; right: 25%;"></div>
-                </div>
-                <div class="dice-face face-6">
-                    <div class="dot" style="top: 25%; left: 25%;"></div>
-                    <div class="dot" style="top: 25%; right: 25%;"></div>
-                    <div class="dot" style="top: 50%; left: 25%; transform: translateY(-50%);"></div>
-                    <div class="dot" style="top: 50%; right: 25%; transform: translateY(-50%);"></div>
-                    <div class="dot" style="bottom: 25%; left: 25%;"></div>
-                    <div class="dot" style="bottom: 25%; right: 25%;"></div>
-                </div>
-            </div>
-        </div>
-        
+        <!-- Game Controls -->
         <div class="game-controls">
-            <button class="control-btn" id="menuBtn"><i class="fas fa-bars"></i> Menu</button>
-            <button class="control-btn" id="soundBtn"><i class="fas fa-volume-up"></i> Sound</button>
-            <button class="control-btn" id="undoBtn"><i class="fas fa-undo"></i> Undo</button>
+            <button class="control-btn" id="newGameBtn">New Game</button>
+            <button class="control-btn" id="rulesBtn">Rules</button>
         </div>
+    </div>
+    
+    <!-- Message Popup -->
+    <div class="message-popup" id="messagePopup">
+        <div id="messageText"></div>
+        <button class="control-btn" id="closePopupBtn" style="margin-top: 10px;">OK</button>
     </div>
 
     <script>
-        // Game State
+        // Game state
         const gameState = {
             currentPlayer: 'red',
             players: {
-                red: { tokens: [], homeCount: 0, color: '#FF5252' },
-                green: { tokens: [], homeCount: 0, color: '#4CAF50' },
-                yellow: { tokens: [], homeCount: 0, color: '#FFD600' },
-                blue: { tokens: [], homeCount: 0, color: '#2196F3' }
+                red: { tokens: [], homeCount: 0, color: 'red', name: 'Player 1' },
+                green: { tokens: [], homeCount: 0, color: 'green', name: 'Player 2' },
+                yellow: { tokens: [], homeCount: 0, color: 'yellow', name: 'Player 3' },
+                blue: { tokens: [], homeCount: 0, color: 'blue', name: 'Player 4' }
             },
-            diceValue: 1,
+            diceValue: 0,
             rollCount: 0,
-            gameTime: 0,
-            soundEnabled: true,
             gameStarted: false,
-            gameMode: 'single',
-            selectedToken: null,
             lastMove: null
         };
 
-        // DOM Elements
-        const loadingScreen = document.querySelector('.loading-screen');
-        const loadingBar = document.getElementById('loadingBar');
-        const homeScreen = document.querySelector('.home-screen');
-        const gameContainer = document.querySelector('.game-container');
+        // DOM elements
         const gameBoard = document.getElementById('gameBoard');
         const dice = document.getElementById('dice');
-        const playerTurnDisplay = document.querySelector('.player-turn');
-        const playerColorDisplay = document.querySelector('.player-color');
+        const diceValue = document.getElementById('diceValue');
+        const currentPlayerDisplay = document.getElementById('currentPlayer');
         const rollCountDisplay = document.getElementById('rollCount');
-        const gameTimeDisplay = document.getElementById('gameTime');
-        
-        // Buttons
-        const singlePlayerBtn = document.getElementById('singlePlayerBtn');
-        const multiplayerBtn = document.getElementById('multiplayerBtn');
-        const howToPlayBtn = document.getElementById('howToPlayBtn');
-        const settingsBtn = document.getElementById('settingsBtn');
-        const menuBtn = document.getElementById('menuBtn');
-        const soundBtn = document.getElementById('soundBtn');
-        const undoBtn = document.getElementById('undoBtn');
+        const messagePopup = document.getElementById('messagePopup');
+        const messageText = document.getElementById('messageText');
+        const newGameBtn = document.getElementById('newGameBtn');
+        const rulesBtn = document.getElementById('rulesBtn');
+        const closePopupBtn = document.getElementById('closePopupBtn');
 
         // Initialize the game
         function initGame() {
-            // Simulate loading progress
-            let progress = 0;
-            const loadingInterval = setInterval(() => {
-                progress += Math.random() * 10;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(loadingInterval);
-                    
-                    // Transition to home screen
-                    setTimeout(() => {
-                        loadingScreen.style.opacity = '0';
-                        setTimeout(() => {
-                            loadingScreen.style.display = 'none';
-                            homeScreen.style.display = 'flex';
-                            initHomeScreen();
-                        }, 800);
-                    }, 300);
-                }
-                loadingBar.style.width = `${progress}%`;
-            }, 100);
-            
-            // Initialize audio context for sounds
-            initAudio();
-        }
-
-        // Initialize home screen
-        function initHomeScreen() {
-            // Event listeners for home screen buttons
-            singlePlayerBtn.addEventListener('click', () => {
-                startGame('single');
-                if (gameState.soundEnabled) playSound('click');
-            });
-            
-            multiplayerBtn.addEventListener('click', () => {
-                startGame('multi');
-                if (gameState.soundEnabled) playSound('click');
-            });
-            
-            howToPlayBtn.addEventListener('click', () => {
-                showHowToPlay();
-                if (gameState.soundEnabled) playSound('click');
-            });
-            
-            settingsBtn.addEventListener('click', () => {
-                showSettings();
-                if (gameState.soundEnabled) playSound('click');
-            });
-        }
-
-        // Start the game
-        function startGame(mode) {
-            gameState.gameMode = mode;
-            gameState.gameStarted = true;
-            gameState.rollCount = 0;
-            gameState.gameTime = 0;
-            
-            // Reset players
-            for (const color in gameState.players) {
-                gameState.players[color].tokens = [];
-                gameState.players[color].homeCount = 0;
-            }
-            
-            // Transition to game screen
-            homeScreen.style.display = 'none';
-            gameContainer.style.display = 'flex';
-            
-            // Initialize game board
             createBoard();
             initializeTokens();
-            
-            // Start game timer
-            startGameTimer();
-            
-            // Update UI
-            updatePlayerTurn();
-            
-            if (gameState.soundEnabled) playSound('start');
+            setupEventListeners();
+            startNewGame();
         }
 
         // Create the game board
@@ -814,76 +345,23 @@
             // Create 15x15 grid
             for (let row = 0; row < 15; row++) {
                 for (let col = 0; col < 15; col++) {
+                    // Skip center area cells
+                    if (row >= 5 && row <= 9 && col >= 5 && col <= 9) continue;
+                    
                     const cell = document.createElement('div');
                     cell.className = 'board-cell';
                     cell.dataset.row = row;
                     cell.dataset.col = col;
-                    cell.id = `cell-${row}-${col}`;
                     
-                    // Set cell types based on position
-                    setCellType(cell, row, col);
+                    // Set path cells
+                    setPathCells(cell, row, col);
+                    
+                    // Set safe cells
+                    setSafeCells(cell, row, col);
                     
                     gameBoard.appendChild(cell);
                 }
             }
-            
-            // Set up dice click event
-            dice.addEventListener('click', rollDice);
-        }
-
-        // Set cell type based on position
-        function setCellType(cell, row, col) {
-            // Center area
-            if (row >= 6 && row <= 8 && col >= 6 && col <= 8) {
-                cell.classList.add('center-cell');
-                const star = document.createElement('div');
-                star.className = 'center-star';
-                cell.appendChild(star);
-                return;
-            }
-            
-            // Player bases
-            if (row < 5 && col < 5) {
-                cell.classList.add('red-base');
-                if ((row === 1 || row === 3) && (col === 1 || col === 3)) {
-                    cell.classList.add('home-cell');
-                    cell.dataset.home = 'red';
-                }
-                return;
-            }
-            
-            if (row < 5 && col > 9) {
-                cell.classList.add('green-base');
-                if ((row === 1 || row === 3) && (col === 11 || col === 13)) {
-                    cell.classList.add('home-cell');
-                    cell.dataset.home = 'green';
-                }
-                return;
-            }
-            
-            if (row > 9 && col < 5) {
-                cell.classList.add('yellow-base');
-                if ((row === 11 || row === 13) && (col === 1 || col === 3)) {
-                    cell.classList.add('home-cell');
-                    cell.dataset.home = 'yellow';
-                }
-                return;
-            }
-            
-            if (row > 9 && col > 9) {
-                cell.classList.add('blue-base');
-                if ((row === 11 || row === 13) && (col === 11 || col === 13)) {
-                    cell.classList.add('home-cell');
-                    cell.dataset.home = 'blue';
-                }
-                return;
-            }
-            
-            // Path cells
-            setPathCells(cell, row, col);
-            
-            // Safe cells
-            setSafeCells(cell, row, col);
         }
 
         // Set path cells
@@ -938,6 +416,12 @@
 
         // Initialize tokens
         function initializeTokens() {
+            // Reset players
+            for (const color in gameState.players) {
+                gameState.players[color].tokens = [];
+                gameState.players[color].homeCount = 0;
+            }
+            
             // Create tokens for each player
             for (let i = 0; i < 4; i++) {
                 createToken('red', i);
@@ -955,10 +439,11 @@
             token.dataset.index = index;
             token.dataset.position = 'base';
             token.dataset.pathIndex = -1;
+            token.textContent = index + 1;
             
             // Find home cell for this token
-            const homeCells = document.querySelectorAll(`[data-home="${color}"]`);
-            const homeCell = homeCells[index];
+            const homeCells = document.querySelectorAll(`[data-path="${color}"]`);
+            const homeCell = homeCells[0] || document.querySelector(`.player-base.${color}-base`);
             homeCell.appendChild(token);
             
             // Add click event
@@ -973,89 +458,61 @@
             });
         }
 
+        // Setup event listeners
+        function setupEventListeners() {
+            dice.addEventListener('click', rollDice);
+            newGameBtn.addEventListener('click', startNewGame);
+            rulesBtn.addEventListener('click', showRules);
+            closePopupBtn.addEventListener('click', hideMessage);
+        }
+
         // Roll the dice
         function rollDice() {
-            if (!gameState.gameStarted) return;
+            if (!gameState.gameStarted) {
+                gameState.gameStarted = true;
+            }
             
-            // Only allow rolling for current player
-            if (gameState.currentPlayer !== 'red' && gameState.gameMode === 'single') return;
+            // Only allow current player to roll
+            if (gameState.currentPlayer !== 'red') return;
             
             // Disable dice during animation
             dice.style.pointerEvents = 'none';
             
             // Animate dice roll
-            const rolls = 10 + Math.floor(Math.random() * 5);
-            let rollCount = 0;
-            
+            let rolls = 0;
+            const maxRolls = 10 + Math.floor(Math.random() * 5);
             const rollInterval = setInterval(() => {
                 const randomValue = Math.floor(Math.random() * 6) + 1;
-                rotateDice(randomValue);
+                diceValue.textContent = randomValue;
                 
-                rollCount++;
-                if (rollCount >= rolls) {
+                rolls++;
+                if (rolls >= maxRolls) {
                     clearInterval(rollInterval);
                     
                     // Set final dice value
                     gameState.diceValue = Math.floor(Math.random() * 6) + 1;
-                    rotateDice(gameState.diceValue);
+                    diceValue.textContent = gameState.diceValue;
                     
                     // Update roll count
                     gameState.rollCount++;
                     rollCountDisplay.textContent = gameState.rollCount;
                     
+                    // Check for valid moves
+                    const hasValidMove = checkValidMoves();
+                    
+                    if (!hasValidMove && gameState.diceValue !== 6) {
+                        setTimeout(() => {
+                            showMessage("No valid moves! Next player's turn.");
+                            nextPlayer();
+                        }, 500);
+                    }
+                    
                     // Re-enable dice
                     setTimeout(() => {
                         dice.style.pointerEvents = 'auto';
-                        
-                        // Check for valid moves
-                        const hasValidMove = checkValidMoves();
-                        
-                        if (!hasValidMove && gameState.diceValue !== 6) {
-                            setTimeout(() => {
-                                if (gameState.soundEnabled) playSound('no-move');
-                                showMessage(`No valid moves! Next player's turn.`);
-                                nextPlayer();
-                            }, 500);
-                        } else if (gameState.soundEnabled) {
-                            playSound('dice');
-                        }
                     }, 500);
                 }
             }, 100);
-        }
-
-        // Rotate dice to show specific value
-        function rotateDice(value) {
-            let rotateX, rotateY;
-            
-            switch(value) {
-                case 1:
-                    rotateX = 0;
-                    rotateY = 0;
-                    break;
-                case 2:
-                    rotateX = 0;
-                    rotateY = 90;
-                    break;
-                case 3:
-                    rotateX = 90;
-                    rotateY = 0;
-                    break;
-                case 4:
-                    rotateX = -90;
-                    rotateY = 0;
-                    break;
-                case 5:
-                    rotateX = 0;
-                    rotateY = -90;
-                    break;
-                case 6:
-                    rotateX = 0;
-                    rotateY = 180;
-                    break;
-            }
-            
-            dice.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
         }
 
         // Check for valid moves
@@ -1117,15 +574,15 @@
             const index = parseInt(tokenElement.dataset.index);
             const token = gameState.players[color].tokens[index];
             
-            // Only allow moving current player's tokens
+            // Only allow current player's tokens
             if (color !== gameState.currentPlayer) {
-                if (gameState.soundEnabled) playSound('error');
+                showMessage("It's not your turn!");
                 return;
             }
             
             // Check if token can move
             if (!canMoveToken(token)) {
-                if (gameState.soundEnabled) playSound('error');
+                showMessage("You can't move this token!");
                 return;
             }
             
@@ -1142,8 +599,6 @@
                 setTimeout(() => {
                     nextPlayer();
                 }, 1000);
-            } else if (gameState.soundEnabled) {
-                playSound('six');
             }
         }
 
@@ -1213,7 +668,7 @@
             token.position = 'path';
             token.pathIndex = 0;
             
-            if (gameState.soundEnabled) playSound('move-out');
+            showMessage("Token moved to start!");
         }
 
         // Move token along path
@@ -1243,7 +698,7 @@
             newPathCell.appendChild(token.element);
             token.pathIndex = newPathIndex;
             
-            if (gameState.soundEnabled) playSound('move');
+            showMessage(`Token moved to position ${newPathIndex}`);
         }
 
         // Capture opponent tokens
@@ -1254,21 +709,16 @@
                 const token = gameState.players[color].tokens[index];
                 
                 // Find home cell for this token
-                const homeCells = document.querySelectorAll(`[data-home="${color}"]`);
-                const homeCell = homeCells[token.index];
+                const homeCells = document.querySelectorAll(`[data-path="${color}"]`);
+                const homeCell = homeCells[0] || document.querySelector(`.player-base.${color}-base`);
                 
                 // Move token back to base
                 homeCell.appendChild(tokenElement);
                 token.position = 'base';
                 token.pathIndex = -1;
-                tokenElement.classList.add('captured');
                 
-                setTimeout(() => {
-                    tokenElement.classList.remove('captured');
-                }, 500);
+                showMessage(`${color} token captured!`);
             });
-            
-            if (gameState.soundEnabled) playSound('capture');
         }
 
         // Move token to home stretch
@@ -1283,7 +733,7 @@
             token.position = 'home-stretch';
             token.pathIndex = 0;
             
-            if (gameState.soundEnabled) playSound('enter-home');
+            showMessage("Token entered home stretch!");
         }
 
         // Move token in home stretch
@@ -1297,7 +747,7 @@
             homeStretchCell.appendChild(token.element);
             token.pathIndex = newPathIndex;
             
-            if (gameState.soundEnabled) playSound('move');
+            showMessage(`Token moved to home position ${newPathIndex}`);
         }
 
         // Move token to home
@@ -1319,17 +769,14 @@
             // Check for win
             if (player.homeCount === 4) {
                 setTimeout(() => {
-                    showMessage(`${color.toUpperCase()} PLAYER WINS!`, true);
-                    if (gameState.soundEnabled) playSound('win');
+                    showMessage(`${player.name.toUpperCase()} WINS THE GAME!`, true);
                     
                     setTimeout(() => {
-                        resetGame();
-                        gameContainer.style.display = 'none';
-                        homeScreen.style.display = 'flex';
+                        startNewGame();
                     }, 3000);
                 }, 500);
-            } else if (gameState.soundEnabled) {
-                playSound('home');
+            } else {
+                showMessage("Token reached home!");
             }
         }
 
@@ -1341,218 +788,65 @@
             gameState.currentPlayer = playerOrder[nextIndex];
             
             // Update UI
-            updatePlayerTurn();
+            const player = gameState.players[gameState.currentPlayer];
+            currentPlayerDisplay.textContent = player.name;
+            currentPlayerDisplay.style.color = player.color;
             
             // Reset dice
-            rotateDice(1);
+            diceValue.textContent = '0';
             gameState.diceValue = 0;
-            
-            // If single player mode and AI's turn
-            if (gameState.gameMode === 'single' && gameState.currentPlayer !== 'red') {
-                setTimeout(() => {
-                    aiMove();
-                }, 1000);
-            }
         }
 
-        // Update player turn display
-        function updatePlayerTurn() {
-            playerTurnDisplay.textContent = `${gameState.currentPlayer.charAt(0).toUpperCase() + gameState.currentPlayer.slice(1)}'s Turn`;
-            playerColorDisplay.style.background = gameState.players[gameState.currentPlayer].color;
-            playerColorDisplay.className = `player-color ${gameState.currentPlayer}`;
-        }
-
-        // AI move
-        function aiMove() {
-            // Roll dice
-            rollDice();
-            
-            // Wait for dice roll to complete
-            setTimeout(() => {
-                const player = gameState.players[gameState.currentPlayer];
-                const movableTokens = player.tokens.filter(canMoveToken);
-                
-                if (movableTokens.length === 0) {
-                    if (gameState.diceValue !== 6) {
-                        setTimeout(() => {
-                            nextPlayer();
-                        }, 1000);
-                    } else {
-                        // Roll again if got a 6
-                        setTimeout(() => {
-                            aiMove();
-                        }, 1000);
-                    }
-                    return;
-                }
-                
-                // Choose a random movable token
-                const randomIndex = Math.floor(Math.random() * movableTokens.length);
-                const tokenToMove = movableTokens[randomIndex];
-                
-                // Move the token after a short delay
-                setTimeout(() => {
-                    moveToken(tokenToMove);
-                    
-                    // If not a 6, move to next player
-                    if (gameState.diceValue !== 6) {
-                        setTimeout(() => {
-                            nextPlayer();
-                        }, 1000);
-                    } else {
-                        // Roll again if got a 6
-                        setTimeout(() => {
-                            aiMove();
-                        }, 1000);
-                    }
-                }, 800);
-            }, 1500);
-        }
-
-        // Start game timer
-        function startGameTimer() {
-            gameState.gameTime = 0;
-            updateGameTime();
-            
-            gameState.timerInterval = setInterval(() => {
-                gameState.gameTime++;
-                updateGameTime();
-            }, 1000);
-        }
-
-        // Update game time display
-        function updateGameTime() {
-            const minutes = Math.floor(gameState.gameTime / 60);
-            const seconds = gameState.gameTime % 60;
-            gameTimeDisplay.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
-        }
-
-        // Reset the game
-        function resetGame() {
-            gameState.gameStarted = false;
+        // Start new game
+        function startNewGame() {
             gameState.currentPlayer = 'red';
+            gameState.diceValue = 0;
             gameState.rollCount = 0;
-            gameState.gameTime = 0;
-            gameState.lastMove = null;
+            gameState.gameStarted = false;
             
-            // Clear timer
-            if (gameState.timerInterval) {
-                clearInterval(gameState.timerInterval);
-            }
+            // Update UI
+            currentPlayerDisplay.textContent = gameState.players.red.name;
+            currentPlayerDisplay.style.color = 'red';
+            rollCountDisplay.textContent = '0';
+            diceValue.textContent = '0';
             
-            // Reset players
-            for (const color in gameState.players) {
-                gameState.players[color].tokens = [];
-                gameState.players[color].homeCount = 0;
-            }
-            
-            // Recreate board and tokens
-            gameBoard.innerHTML = '';
+            // Reinitialize board
             createBoard();
             initializeTokens();
             
-            // Update UI
-            updatePlayerTurn();
-            rollCountDisplay.textContent = '0';
-            gameTimeDisplay.textContent = '0:00';
+            showMessage("New game started! Red player's turn.");
         }
 
-        // Show how to play
-        function showHowToPlay() {
-            const message = `
-                <h2>How to Play Ludo Champions</h2>
+        // Show game rules
+        function showRules() {
+            const rules = `
+                <h3>Ludo Game Rules</h3>
                 <ol>
-                    <li>Each player takes turns to roll the dice.</li>
-                    <li>On a 6, you can move a token out of your base or move any token.</li>
-                    <li>Move your tokens around the board according to the dice roll.</li>
-                    <li>If you land on an opponent's token, it gets sent back to their base.</li>
+                    <li>Each player takes turns to roll the dice</li>
+                    <li>On a 6, you can move a token out of your base or move any token</li>
+                    <li>Move your tokens around the board according to the dice roll</li>
+                    <li>If you land on an opponent's token, it gets sent back to their base</li>
                     <li>The first player to get all 4 tokens to the home area wins!</li>
                 </ol>
+                <p style="margin-top: 10px; font-style: italic;">Developed by Rayhan</p>
             `;
-            
-            showMessage(message, false, true);
-        }
-
-        // Show settings
-        function showSettings() {
-            const message = `
-                <h2>Game Settings</h2>
-                <div class="setting-option">
-                    <label>
-                        <input type="checkbox" id="soundToggle" ${gameState.soundEnabled ? 'checked' : ''}>
-                        Sound Effects
-                    </label>
-                </div>
-                <div class="setting-option">
-                    <label>
-                        <input type="checkbox" id="animationsToggle" checked>
-                        Animations
-                    </label>
-                </div>
-                <button id="saveSettings">Save Settings</button>
-            `;
-            
-            showMessage(message, false, true);
-            
-            // Add event listener for save button
-            document.getElementById('saveSettings').addEventListener('click', () => {
-                gameState.soundEnabled = document.getElementById('soundToggle').checked;
-                soundBtn.innerHTML = `<i class="fas fa-volume-${gameState.soundEnabled ? 'up' : 'off'}"></i> Sound`;
-                hideMessage();
-                
-                if (gameState.soundEnabled) playSound('click');
-            });
+            showMessage(rules);
         }
 
         // Show message popup
-        function showMessage(message, isWin = false, isHtml = false) {
-            const popup = document.createElement('div');
-            popup.className = `message-popup ${isWin ? 'win-popup' : ''}`;
-            
-            if (isHtml) {
-                popup.innerHTML = message;
+        function showMessage(message, isWin = false) {
+            messageText.innerHTML = message;
+            messagePopup.style.display = 'block';
+            if (isWin) {
+                messagePopup.style.background = 'rgba(0, 100, 0, 0.9)';
             } else {
-                popup.textContent = message;
+                messagePopup.style.background = 'rgba(0, 0, 0, 0.8)';
             }
-            
-            document.body.appendChild(popup);
-            
-            setTimeout(() => {
-                popup.classList.add('show');
-            }, 10);
-            
-            return popup;
         }
 
         // Hide message popup
         function hideMessage() {
-            const popup = document.querySelector('.message-popup');
-            if (popup) {
-                popup.classList.remove('show');
-                setTimeout(() => {
-                    popup.remove();
-                }, 300);
-            }
-        }
-
-        // Initialize audio
-        function initAudio() {
-            // In a real implementation, you would preload audio files
-            gameState.audio = {
-                dice: new Audio('dice_sound.mp3'),
-                move: new Audio('move_sound.mp3'),
-                capture: new Audio('capture_sound.mp3'),
-                win: new Audio('win_sound.mp3'),
-                click: new Audio('click_sound.mp3')
-            };
-        }
-
-        // Play sound
-        function playSound(type) {
-            if (!gameState.soundEnabled) return;
-            
-            // In a real implementation, you would play the actual sound
-            console.log(`Playing ${type} sound`);
+            messagePopup.style.display = 'none';
         }
 
         // Initialize the game when page loads
