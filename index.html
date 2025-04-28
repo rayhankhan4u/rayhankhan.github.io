@@ -3,656 +3,1191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Watch for Earn</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Monetag SDK -->
-    <script src="//whephiwums.com/sdk.js" data-zone="9050013" data-sdk="show_9050013"></script>
+    <title>Professional Ludo Game | Developed by Rayhan</title>
     <style>
-        :root {
-            --primary-color: #4CAF50;
-            --secondary-color: #FF5722;
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-color: #ffffff;
-            --warning-color: #FFD700;
-            --error-color: #ff5555;
-            --success-color: #4CAF50;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
+        /* Global Styles */
+        * {
             margin: 0;
-            padding: 20px;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            line-height: 1.6;
-        }
-        
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        
-        h1 {
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            font-size: 2.2em;
-        }
-        
-        .user-info {
-            color: var(--secondary-color);
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        
-        h2 {
-            color: var(--primary-color);
-            font-size: 1.5em;
-            margin-top: 0;
-        }
-        
-        .balance-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 15px;
-        }
-        
-        .balance-item {
-            flex: 1;
-            padding: 10px;
-        }
-        
-        .balance-value {
-            font-size: 1.3em;
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .progress-container {
-            margin: 25px 0;
-        }
-        
-        .progress-bar {
-            height: 30px;
-            background-color: #333;
-            border-radius: 15px;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), #8BC34A);
-            width: 0%;
-            transition: width 0.5s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-        
-        .button-group {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 25px 0;
-            flex-wrap: wrap;
-        }
-        
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 5px;
-            font-size: 1em;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 150px;
-        }
-        
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background-color: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        
-        .btn-secondary {
-            background-color: #333;
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background-color: #444;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        
-        .btn:disabled {
-            background-color: #777;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .notice {
-            padding: 15px;
-            border-radius: 5px;
-            margin: 20px 0;
-            font-size: 0.9em;
-        }
-        
-        .notice-warning {
-            background-color: rgba(255, 215, 0, 0.1);
-            border: 1px solid var(--warning-color);
-            color: var(--warning-color);
-        }
-        
-        .notice-error {
-            background-color: rgba(255, 85, 85, 0.1);
-            border: 1px solid var(--error-color);
-            color: var(--error-color);
-        }
-        
-        .notice-success {
-            background-color: rgba(76, 175, 80, 0.1);
-            border: 1px solid var(--success-color);
-            color: var(--success-color);
-        }
-        
-        .loading {
-            display: none;
-            margin: 20px 0;
-        }
-        
-        .loading-spinner {
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top: 4px solid var(--primary-color);
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .transaction-history {
-            display: none;
-            text-align: left;
-            max-height: 300px;
-            overflow-y: auto;
-            padding: 10px;
-            background-color: #252525;
-            border-radius: 5px;
-        }
-        
-        .transaction-history ul {
-            list-style-type: none;
             padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
-        .transaction-history li {
-            padding: 8px 0;
-            border-bottom: 1px solid #333;
+
+        body {
+            background-color: #f5f5f5;
+            overflow: hidden;
         }
-        
-        .transaction-history li:last-child {
-            border-bottom: none;
-        }
-        
-        .developer {
-            margin-top: 40px;
-            font-size: 0.9em;
-            color: #777;
-        }
-        
-        .highlight {
-            color: var(--secondary-color);
-            font-weight: bold;
-        }
-        
-        /* Payment Method Dialog */
-        .payment-dialog {
-            display: none;
+
+        /* Loading Screen */
+        .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .ludo-icon {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 30px;
+            animation: bounce 2s infinite;
+        }
+
+        .loading-text {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .loading-bar {
+            width: 300px;
+            height: 10px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .loading-progress {
+            height: 100%;
+            width: 0%;
+            background-color: white;
+            animation: loading 3s forwards;
+        }
+
+        .developer-text {
+            color: white;
+            font-size: 18px;
+            font-style: italic;
+            margin-top: 20px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes loading {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Home Screen */
+        .home-screen {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .home-screen.active {
+            display: flex;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .game-title {
+            font-size: 3rem;
+            color: #4a4a4a;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .developer-name {
+            font-size: 1.2rem;
+            color: #6e8efb;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+
+        .game-options {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .option-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .game-container {
+            display: none;
+            width: 100%;
+            height: 100vh;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 20px;
+        }
+
+        .game-container.active {
+            display: flex;
+        }
+
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 20px;
+        }
+
+        .game-info {
+            display: flex;
+            gap: 20px;
+        }
+
+        .info-box {
+            background-color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .player-turn {
+            font-weight: bold;
+            color: #6e8efb;
+        }
+
+        .dice-container {
+            background-color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .dice-container:hover {
+            transform: scale(1.05);
+        }
+
+        .dice-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .ludo-board {
+            width: 90vmin;
+            height: 90vmin;
+            max-width: 600px;
+            max-height: 600px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            grid-template-rows: repeat(15, 1fr);
+            overflow: hidden;
+        }
+
+        .cell {
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        /* Board colors */
+        .red-area {
+            background-color: #ff6b6b;
+            grid-column: 1 / 6;
+            grid-row: 1 / 6;
+        }
+
+        .green-area {
+            background-color: #51cf66;
+            grid-column: 10 / 15;
+            grid-row: 1 / 6;
+        }
+
+        .yellow-area {
+            background-color: #fcc419;
+            grid-column: 1 / 6;
+            grid-row: 10 / 15;
+        }
+
+        .blue-area {
+            background-color: #339af0;
+            grid-column: 10 / 15;
+            grid-row: 10 / 15;
+        }
+
+        .center-area {
+            background-color: #fff;
+            grid-column: 6 / 10;
+            grid-row: 6 / 10;
+            display: flex;
             justify-content: center;
             align-items: center;
         }
-        
-        .payment-content {
-            background-color: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 400px;
+
+        .star {
+            width: 80%;
+            height: 80%;
+            background-color: #f8f9fa;
+            clip-path: polygon(
+                50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
+            );
         }
-        
-        .payment-option {
-            margin: 15px 0;
-            padding: 10px;
-            border: 1px solid #444;
-            border-radius: 5px;
+
+        /* Path cells */
+        .red-path {
+            background-color: #ffc9c9;
+        }
+
+        .green-path {
+            background-color: #b2f2bb;
+        }
+
+        .yellow-path {
+            background-color: #ffec99;
+        }
+
+        .blue-path {
+            background-color: #a5d8ff;
+        }
+
+        /* Safe cells */
+        .safe-cell {
+            background-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .safe-cell::after {
+            content: "";
+            width: 50%;
+            height: 50%;
+            background-color: #495057;
+            border-radius: 50%;
+        }
+
+        /* Home cells */
+        .home-cell {
+            border-radius: 50%;
+        }
+
+        .red-home {
+            background-color: #ff8787;
+        }
+
+        .green-home {
+            background-color: #69db7c;
+        }
+
+        .yellow-home {
+            background-color: #ffd43b;
+        }
+
+        .blue-home {
+            background-color: #4dabf7;
+        }
+
+        /* Tokens */
+        .token {
+            width: 70%;
+            height: 70%;
+            border-radius: 50%;
+            position: absolute;
+            top: 15%;
+            left: 15%;
             cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .payment-option:hover {
-            background-color: #333;
-        }
-        
-        .payment-option.selected {
-            border-color: var(--primary-color);
-            background-color: rgba(76, 175, 80, 0.2);
-        }
-        
-        .payment-input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            background-color: #333;
-            border: 1px solid #444;
-            border-radius: 5px;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+            display: flex;
+            justify-content: center;
+            align-items: center;
             color: white;
+            font-weight: bold;
         }
-        
-        /* Responsive design */
-        @media (max-width: 600px) {
-            .balance-info {
-                flex-direction: column;
+
+        .token:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .token.red {
+            background-color: #fa5252;
+            border: 2px solid #e03131;
+        }
+
+        .token.green {
+            background-color: #40c057;
+            border: 2px solid #2f9e44;
+        }
+
+        .token.yellow {
+            background-color: #fab005;
+            border: 2px solid #f08c00;
+        }
+
+        .token.blue {
+            background-color: #339af0;
+            border: 2px solid #1971c2;
+        }
+
+        .token.highlight {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2); }
+            70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(0, 0, 0, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+        }
+
+        /* Game controls */
+        .game-controls {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .control-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .game-title {
+                font-size: 2rem;
             }
             
-            .button-group {
+            .developer-name {
+                font-size: 1rem;
+            }
+            
+            .option-btn {
+                padding: 12px 24px;
+                font-size: 1rem;
+            }
+            
+            .game-header {
                 flex-direction: column;
+                align-items: center;
                 gap: 10px;
             }
             
-            .btn {
+            .game-info {
                 width: 100%;
+                justify-content: space-between;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Watch for Earn</h1>
-        <div class="user-info" id="user-info">
-            Welcome, User!
+    <!-- Loading Screen -->
+    <div class="loading-screen">
+        <img src="https://cdn-icons-png.flaticon.com/512/2693/2693477.png" alt="Ludo Icon" class="ludo-icon">
+        <div class="loading-text">Loading Professional Ludo Game</div>
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+        <div class="developer-text">Developed by Rayhan</div>
+    </div>
+
+    <!-- Home Screen -->
+    <div class="home-screen">
+        <div class="header">
+            <h1 class="game-title">Professional Ludo</h1>
+            <div class="developer-name">Developed by Rayhan</div>
         </div>
         
-        <div class="card">
-            <h2>Your Earnings</h2>
-            
-            <div class="balance-info">
-                <div class="balance-item">
-                    <div>Watched Ads</div>
-                    <div class="balance-value" id="watched-ads">0</div>
-                </div>
-                <div class="balance-item">
-                    <div>USD Balance</div>
-                    <div class="balance-value">$<span id="usd-balance">0.000</span></div>
-                </div>
-                <div class="balance-item">
-                    <div>BDT Balance</div>
-                    <div class="balance-value">৳<span id="bdt-balance">0.00</span></div>
-                </div>
-            </div>
-            
-            <div class="progress-container">
-                <div>Withdrawal Progress (Minimum $2.00)</div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progress-bar">0%</div>
-                </div>
-            </div>
-            
-            <div class="notice notice-warning">
-                <strong>Ad Viewing Rules:</strong> After clicking 'Watch Ad', wait for the ad to load. Then click 'Continue' and wait 30 seconds on the next page. Leaving early will cancel your reward.
-            </div>
-            
-            <div class="loading" id="ad-loading">
-                <div class="loading-spinner"></div>
-                <div>Loading ad, please wait...</div>
-            </div>
-            
-            <div class="button-group">
-                <button id="watch-ad-btn" class="btn btn-primary">Watch Ad (+$0.0035)</button>
-                <button id="withdraw-btn" class="btn btn-secondary" disabled>Withdraw Earnings</button>
-                <button id="transaction-btn" class="btn btn-secondary">Transaction History</button>
-            </div>
-            
-            <div class="notice notice-error" id="withdraw-notice">
-                <strong>Notice:</strong> Withdrawal available when you reach $2.00 balance.
-            </div>
-        </div>
-        
-        <div class="card transaction-history" id="transaction-history">
-            <h2>Transaction History</h2>
-            <ul id="transaction-list"></ul>
-        </div>
-        
-        <div class="developer">
-            Developed by <span class="highlight">Rayhan</span>
+        <div class="game-options">
+            <button class="option-btn" id="singlePlayerBtn">Single Player</button>
+            <button class="option-btn" id="multiplayerBtn">Multiplayer</button>
+            <button class="option-btn" id="howToPlayBtn">How to Play</button>
+            <button class="option-btn" id="settingsBtn">Settings</button>
         </div>
     </div>
 
-    <!-- Payment Method Dialog -->
-    <div class="payment-dialog" id="payment-dialog">
-        <div class="payment-content">
-            <h2>Select Payment Method</h2>
-            
-            <div class="payment-option" data-method="bkash">
-                <strong>Bkash (Personal)</strong>
-                <p>1.5% processing fee</p>
+    <!-- Game Container -->
+    <div class="game-container">
+        <div class="game-header">
+            <div class="game-info">
+                <div class="info-box">
+                    <span>Player:</span>
+                    <span class="player-turn">Red</span>
+                </div>
+                <div class="info-box">
+                    <span>Rolls:</span>
+                    <span class="rolls-count">0</span>
+                </div>
             </div>
             
-            <div class="payment-option" data-method="nagad">
-                <strong>Nagad (Personal)</strong>
-                <p>1.5% processing fee</p>
+            <div class="dice-container" id="dice">
+                <div class="dice-value">0</div>
             </div>
-            
-            <div class="payment-option" data-method="trc20">
-                <strong>USDT (TRC20)</strong>
-                <p>No processing fee</p>
-            </div>
-            
-            <input type="text" id="payment-details" class="payment-input" placeholder="Enter account number/TRC20 address">
-            
-            <div class="button-group">
-                <button id="confirm-payment" class="btn btn-primary">Confirm Withdrawal</button>
-                <button id="cancel-payment" class="btn btn-secondary">Cancel</button>
-            </div>
+        </div>
+        
+        <div class="ludo-board" id="board">
+            <!-- Board will be generated by JavaScript -->
+        </div>
+        
+        <div class="game-controls">
+            <button class="control-btn" id="newGameBtn">New Game</button>
+            <button class="control-btn" id="homeBtn">Home</button>
+            <button class="control-btn" id="soundBtn">Sound: ON</button>
         </div>
     </div>
 
     <script>
-        // Enhanced configuration
-        const config = {
-            earningsPerAd: {
-                usd: 0.0035, // $0.0035 per ad
-                bdt: 0.35    // 1 USD = 100 BDT
-            },
-            withdrawalThreshold: 2.00, // USD
-            maxAds: Math.ceil(2 / 0.0035), // Calculate ads needed for $2
-            adLoadingTime: 15000, // 15 seconds
-            adViewingTime: 30000, // 30 seconds
-            paymentMethods: {
-                'bkash': { name: 'Bkash (Personal)', fee: 1.5 },
-                'nagad': { name: 'Nagad (Personal)', fee: 1.5 },
-                'trc20': { name: 'USDT (TRC20)', fee: 0 }
-            },
-            // Telegram Bot Configuration - আপনার প্রদত্ত তথ্য
-            telegramBot: {
-                token: '7675676405:AAF8Goz8aDIfSn3j5vxYo8RN76f3-YrjgqQ',
-                chatId: '7167361126'
-            }
+        // Game Variables
+        let currentPlayer = 'red';
+        let diceValue = 0;
+        let rollsCount = 0;
+        let soundEnabled = true;
+        let gameStarted = false;
+        let players = {
+            red: { tokens: [], homeCount: 0 },
+            green: { tokens: [], homeCount: 0 },
+            yellow: { tokens: [], homeCount: 0 },
+            blue: { tokens: [], homeCount: 0 }
         };
         
-        // User data with localStorage integration
-        const userData = {
-            watchedAds: localStorage.getItem("watchedAds") ? parseInt(localStorage.getItem("watchedAds")) : 0,
-            balanceUSD: localStorage.getItem("balanceUSD") ? parseFloat(localStorage.getItem("balanceUSD")) : 0,
-            balanceBDT: localStorage.getItem("balanceBDT") ? parseFloat(localStorage.getItem("balanceBDT")) : 0,
-            transactions: JSON.parse(localStorage.getItem("transactions")) || [],
-            selectedPaymentMethod: null,
-            
-            saveData: function() {
-                localStorage.setItem("watchedAds", this.watchedAds);
-                localStorage.setItem("balanceUSD", this.balanceUSD);
-                localStorage.setItem("balanceBDT", this.balanceBDT);
-                localStorage.setItem("transactions", JSON.stringify(this.transactions));
-            },
-            
-            addTransaction: function(type, amount, note = '') {
-                const now = new Date();
-                const timestamp = now.toLocaleString();
+        // DOM Elements
+        const loadingScreen = document.querySelector('.loading-screen');
+        const homeScreen = document.querySelector('.home-screen');
+        const gameContainer = document.querySelector('.game-container');
+        const playerTurnDisplay = document.querySelector('.player-turn');
+        const rollsCountDisplay = document.querySelector('.rolls-count');
+        const diceContainer = document.getElementById('dice');
+        const diceValueDisplay = document.querySelector('.dice-value');
+        const board = document.getElementById('board');
+        const soundBtn = document.getElementById('soundBtn');
+        const homeBtn = document.getElementById('homeBtn');
+        const newGameBtn = document.getElementById('newGameBtn');
+        const singlePlayerBtn = document.getElementById('singlePlayerBtn');
+        const multiplayerBtn = document.getElementById('multiplayerBtn');
+        const howToPlayBtn = document.getElementById('howToPlayBtn');
+        const settingsBtn = document.getElementById('settingsBtn');
+        
+        // Initialize the game
+        function initGame() {
+            // Hide loading screen after 3 seconds
+            setTimeout(() => {
+                loadingScreen.classList.add('hidden');
+                homeScreen.classList.add('active');
                 
-                this.transactions.unshift(
-                    `${timestamp}: ${type} $${amount.toFixed(4)} (Balance: $${this.balanceUSD.toFixed(3)}) ${note}`
-                );
+                // Initialize home screen
+                initHomeScreen();
+            }, 3000);
+        }
+        
+        // Initialize home screen
+        function initHomeScreen() {
+            singlePlayerBtn.addEventListener('click', () => {
+                startGame('single');
+            });
+            
+            multiplayerBtn.addEventListener('click', () => {
+                startGame('multi');
+            });
+            
+            howToPlayBtn.addEventListener('click', () => {
+                alert("How to Play Ludo:\n\n1. Each player takes turns to roll the dice.\n2. On a 6, you can move a token out of your base or move any token.\n3. Move your tokens around the board according to the dice roll.\n4. If you land on an opponent's token, it gets sent back to their base.\n5. The first player to get all 4 tokens to the home area wins!");
+            });
+            
+            settingsBtn.addEventListener('click', () => {
+                soundEnabled = !soundEnabled;
+                soundBtn.textContent = `Sound: ${soundEnabled ? 'ON' : 'OFF'}`;
+                alert(`Sound ${soundEnabled ? 'enabled' : 'disabled'}`);
+            });
+            
+            homeBtn.addEventListener('click', () => {
+                gameContainer.classList.remove('active');
+                homeScreen.classList.add('active');
+                resetGame();
+            });
+            
+            newGameBtn.addEventListener('click', () => {
+                resetGame();
+            });
+            
+            soundBtn.addEventListener('click', () => {
+                soundEnabled = !soundEnabled;
+                soundBtn.textContent = `Sound: ${soundEnabled ? 'ON' : 'OFF'}`;
+                if (soundEnabled) playSound('click');
+            });
+        }
+        
+        // Start the game
+        function startGame(mode) {
+            homeScreen.classList.remove('active');
+            gameContainer.classList.add('active');
+            
+            // Initialize board
+            createBoard();
+            initializeTokens();
+            
+            // Set up game state
+            currentPlayer = 'red';
+            playerTurnDisplay.textContent = 'Red';
+            playerTurnDisplay.style.color = '#fa5252';
+            rollsCount = 0;
+            rollsCountDisplay.textContent = rollsCount;
+            gameStarted = true;
+            
+            if (soundEnabled) playSound('start');
+        }
+        
+        // Create the Ludo board
+        function createBoard() {
+            board.innerHTML = '';
+            
+            // Create 15x15 grid
+            for (let row = 0; row < 15; row++) {
+                for (let col = 0; col < 15; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    
+                    // Set cell IDs for path tracking
+                    cell.id = `cell-${row}-${col}`;
+                    
+                    // Color areas
+                    if (row < 5 && col < 5) {
+                        cell.classList.add('red-area');
+                    } else if (row < 5 && col >= 10) {
+                        cell.classList.add('green-area');
+                    } else if (row >= 10 && col < 5) {
+                        cell.classList.add('yellow-area');
+                    } else if (row >= 10 && col >= 10) {
+                        cell.classList.add('blue-area');
+                    } else if (row >= 6 && row < 9 && col >= 6 && col < 9) {
+                        cell.classList.add('center-area');
+                        const star = document.createElement('div');
+                        star.className = 'star';
+                        cell.appendChild(star);
+                    }
+                    
+                    // Path cells
+                    setPathCells(cell, row, col);
+                    
+                    // Safe cells
+                    setSafeCells(cell, row, col);
+                    
+                    // Home cells
+                    setHomeCells(cell, row, col);
+                    
+                    board.appendChild(cell);
+                }
+            }
+            
+            // Set up dice event
+            diceContainer.addEventListener('click', rollDice);
+        }
+        
+        // Set path cells
+        function setPathCells(cell, row, col) {
+            // Red path (top left to top right)
+            if ((row === 4 && col >= 5 && col <= 9) || 
+                (col === 5 && row >= 5 && row <= 9)) {
+                cell.classList.add('red-path');
+                cell.dataset.path = 'red';
+                cell.dataset.pathIndex = row === 4 ? col - 5 : 5 + (9 - row);
+            }
+            
+            // Green path (top right to bottom right)
+            if ((col === 9 && row >= 5 && row <= 9) || 
+                (row === 5 && col >= 5 && col <= 9)) {
+                cell.classList.add('green-path');
+                cell.dataset.path = 'green';
+                cell.dataset.pathIndex = col === 9 ? 5 + (row - 5) : 5 + (9 - col);
+            }
+            
+            // Yellow path (bottom left to top left)
+            if ((row === 9 && col >= 5 && col <= 9) || 
+                (col === 6 && row >= 5 && row <= 9)) {
+                cell.classList.add('yellow-path');
+                cell.dataset.path = 'yellow';
+                cell.dataset.pathIndex = row === 9 ? 5 + (9 - col) : 5 + (row - 5);
+            }
+            
+            // Blue path (bottom right to bottom left)
+            if ((col === 5 && row >= 5 && row <= 9) || 
+                (row === 10 && col >= 5 && col <= 9)) {
+                cell.classList.add('blue-path');
+                cell.dataset.path = 'blue';
+                cell.dataset.pathIndex = col === 5 ? 5 + (9 - row) : 5 + (col - 5);
+            }
+        }
+        
+        // Set safe cells
+        function setSafeCells(cell, row, col) {
+            const safeCells = [
+                [6, 1], [1, 6], [6, 13], [1, 8],
+                [8, 1], [13, 6], [8, 13], [13, 8]
+            ];
+            
+            for (const [r, c] of safeCells) {
+                if (row === r && col === c) {
+                    cell.classList.add('safe-cell');
+                    break;
+                }
+            }
+        }
+        
+        // Set home cells
+        function setHomeCells(cell, row, col) {
+            // Red home cells
+            if ((row === 1 && col === 1) || (row === 1 && col === 3) || 
+                (row === 3 && col === 1) || (row === 3 && col === 3)) {
+                cell.classList.add('home-cell', 'red-home');
+                cell.dataset.home = 'red';
+            }
+            
+            // Green home cells
+            if ((row === 1 && col === 11) || (row === 1 && col === 13) || 
+                (row === 3 && col === 11) || (row === 3 && col === 13)) {
+                cell.classList.add('home-cell', 'green-home');
+                cell.dataset.home = 'green';
+            }
+            
+            // Yellow home cells
+            if ((row === 11 && col === 1) || (row === 11 && col === 3) || 
+                (row === 13 && col === 1) || (row === 13 && col === 3)) {
+                cell.classList.add('home-cell', 'yellow-home');
+                cell.dataset.home = 'yellow';
+            }
+            
+            // Blue home cells
+            if ((row === 11 && col === 11) || (row === 11 && col === 13) || 
+                (row === 13 && col === 11) || (row === 13 && col === 13)) {
+                cell.classList.add('home-cell', 'blue-home');
+                cell.dataset.home = 'blue';
+            }
+        }
+        
+        // Initialize tokens
+        function initializeTokens() {
+            // Clear previous tokens
+            players.red.tokens = [];
+            players.green.tokens = [];
+            players.yellow.tokens = [];
+            players.blue.tokens = [];
+            
+            // Create tokens for each player
+            for (let i = 0; i < 4; i++) {
+                createToken('red', i);
+                createToken('green', i);
+                createToken('yellow', i);
+                createToken('blue', i);
+            }
+        }
+        
+        // Create a token
+        function createToken(color, index) {
+            const token = document.createElement('div');
+            token.className = `token ${color}`;
+            token.dataset.color = color;
+            token.dataset.index = index;
+            token.dataset.position = 'base';
+            token.dataset.pathIndex = -1;
+            
+            // Find home cell for this token
+            const homeCells = document.querySelectorAll(`[data-home="${color}"]`);
+            const homeCell = homeCells[index];
+            homeCell.appendChild(token);
+            
+            // Add click event
+            token.addEventListener('click', () => handleTokenClick(token));
+            
+            // Store token reference
+            players[color].tokens.push({
+                element: token,
+                position: 'base',
+                pathIndex: -1
+            });
+        }
+        
+        // Roll the dice
+        function rollDice() {
+            if (!gameStarted) return;
+            
+            // Only allow rolling if it's the player's turn
+            if (currentPlayer !== 'red') return; // In single player, only red is human
+            
+            // Disable dice during animation
+            diceContainer.style.pointerEvents = 'none';
+            
+            // Animate dice
+            let rolls = 0;
+            const maxRolls = 10;
+            const rollInterval = setInterval(() => {
+                diceValue = Math.floor(Math.random() * 6) + 1;
+                diceValueDisplay.textContent = diceValue;
+                rolls++;
                 
-                if (this.transactions.length > 20) {
-                    this.transactions = this.transactions.slice(0, 20);
+                if (rolls >= maxRolls) {
+                    clearInterval(rollInterval);
+                    diceContainer.style.pointerEvents = 'auto';
+                    rollsCount++;
+                    rollsCountDisplay.textContent = rollsCount;
+                    
+                    // Check for valid moves
+                    const hasValidMove = checkValidMoves();
+                    
+                    if (!hasValidMove && diceValue !== 6) {
+                        setTimeout(() => {
+                            alert("No valid moves! Next player's turn.");
+                            nextPlayer();
+                        }, 500);
+                    }
+                    
+                    if (soundEnabled) playSound('dice');
+                }
+            }, 100);
+        }
+        
+        // Check if player has any valid moves
+        function checkValidMoves() {
+            const playerTokens = players[currentPlayer].tokens;
+            let hasValidMove = false;
+            
+            // Highlight movable tokens
+            playerTokens.forEach(token => {
+                if (canMoveToken(token)) {
+                    token.element.classList.add('highlight');
+                    hasValidMove = true;
+                } else {
+                    token.element.classList.remove('highlight');
+                }
+            });
+            
+            return hasValidMove;
+        }
+        
+        // Check if a token can move
+        function canMoveToken(token) {
+            // If token is in base, can only move out on a 6
+            if (token.position === 'base' && diceValue === 6) {
+                return true;
+            }
+            
+            // If token is on path
+            if (token.position === 'path') {
+                const newPathIndex = token.pathIndex + diceValue;
+                
+                // Check if move would go beyond home
+                if (newPathIndex > 56) {
+                    return false;
                 }
                 
-                this.saveData();
-            }
-        };
-        
-        // Initialize UI
-        updateUI();
-        setupTelegramUsername();
-
-        // UI Update functions
-        function updateUI() {
-            // Update balances
-            $('#watched-ads').text(userData.watchedAds);
-            $('#usd-balance').text(userData.balanceUSD.toFixed(4));
-            $('#bdt-balance').text(userData.balanceBDT.toFixed(2));
-            
-            // Update progress bar
-            const progressPercent = (userData.balanceUSD / config.withdrawalThreshold) * 100;
-            $('#progress-bar').css('width', progressPercent + '%').text(Math.round(progressPercent) + '%');
-            
-            // Update withdraw button state
-            $('#withdraw-btn').prop('disabled', userData.balanceUSD < config.withdrawalThreshold);
-            
-            // Update withdraw notice
-            if (userData.balanceUSD >= config.withdrawalThreshold) {
-                $('#withdraw-notice').removeClass('notice-error').addClass('notice-success')
-                    .html('<strong>Ready to withdraw!</strong> You can now withdraw your earnings.');
-            } else {
-                const needed = (config.withdrawalThreshold - userData.balanceUSD).toFixed(4);
-                $('#withdraw-notice').removeClass('notice-success').addClass('notice-error')
-                    .html(`<strong>Notice:</strong> You need $${needed} more to withdraw. Watch ${Math.ceil(parseFloat(needed)/config.earningsPerAd.usd)} more ads.`);
+                return true;
             }
             
-            updateTransactionList();
-        }
-        
-        function updateTransactionList() {
-            const $list = $('#transaction-list').empty();
-            
-            userData.transactions.forEach(transaction => {
-                $list.append(`<li>${transaction}</li>`);
-            });
-        }
-        
-        function showLoading(show) {
-            $('#ad-loading').toggle(show);
-            $('#watch-ad-btn').prop('disabled', show);
-        }
-        
-        // Telegram username handling
-        function setupTelegramUsername() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const username = urlParams.get('username') || 'User';
-            $('#user-info').text(`Welcome, ${username}!`);
-            return username;
-        }
-        
-        // Payment method handling
-        function setupPaymentMethods() {
-            $('.payment-option').click(function() {
-                $('.payment-option').removeClass('selected');
-                $(this).addClass('selected');
-                userData.selectedPaymentMethod = $(this).data('method');
+            // If token is in home stretch
+            if (token.position === 'home-stretch') {
+                const newPathIndex = token.pathIndex + diceValue;
                 
-                // Update placeholder based on selection
-                const placeholder = userData.selectedPaymentMethod === 'trc20' ? 
-                    'Enter your TRC20 wallet address' : 
-                    'Enter your account number';
-                $('#payment-details').attr('placeholder', placeholder);
+                // Check if move would go beyond home
+                if (newPathIndex > 6) {
+                    return false;
+                }
+                
+                return true;
+            }
+            
+            return false;
+        }
+        
+        // Handle token click
+        function handleTokenClick(token) {
+            if (!gameStarted || currentPlayer !== 'red') return;
+            
+            const color = token.dataset.color;
+            const index = parseInt(token.dataset.index);
+            const tokenData = players[color].tokens[index];
+            
+            // Check if token can move
+            if (!canMoveToken(tokenData)) return;
+            
+            // Move the token
+            moveToken(tokenData);
+            
+            // Remove highlights
+            players[currentPlayer].tokens.forEach(t => {
+                t.element.classList.remove('highlight');
             });
             
-            $('#confirm-payment').click(function() {
-                if (!userData.selectedPaymentMethod) {
-                    alert('Please select a payment method');
+            // If not a 6, move to next player
+            if (diceValue !== 6) {
+                setTimeout(() => {
+                    nextPlayer();
+                }, 1000);
+            }
+        }
+        
+        // Move a token
+        function moveToken(token) {
+            // If token is in base, move to start
+            if (token.position === 'base') {
+                moveTokenToStart(token);
+                return;
+            }
+            
+            // If token is on path
+            if (token.position === 'path') {
+                const newPathIndex = token.pathIndex + diceValue;
+                
+                // Check if entering home stretch
+                if (newPathIndex === 51) {
+                    moveTokenToHomeStretch(token);
                     return;
                 }
                 
-                const account = $('#payment-details').val().trim();
-                if (!account) {
-                    alert('Please enter your account details');
+                // Check if moving beyond home stretch entry
+                if (newPathIndex > 51) {
+                    // Can't move beyond home stretch entry
                     return;
                 }
                 
-                // Prepare withdrawal data
-                const username = setupTelegramUsername();
-                const withdrawalData = {
-                    username: username,
-                    amount: userData.balanceUSD.toFixed(4),
-                    method: config.paymentMethods[userData.selectedPaymentMethod].name,
-                    account: account,
-                    date: new Date().toLocaleString(),
-                    fee: config.paymentMethods[userData.selectedPaymentMethod].fee
-                };
+                // Move along path
+                moveTokenAlongPath(token, newPathIndex);
+                return;
+            }
+            
+            // If token is in home stretch
+            if (token.position === 'home-stretch') {
+                const newPathIndex = token.pathIndex + diceValue;
                 
-                // Send to Telegram bot
-                sendToTelegramBot(withdrawalData);
-                
-                // Add transaction record
-                const methodInfo = config.paymentMethods[userData.selectedPaymentMethod];
-                let note = `Via ${methodInfo.name} to ${account}`;
-                
-                if (methodInfo.fee > 0) {
-                    const fee = (userData.balanceUSD * methodInfo.fee / 100).toFixed(4);
-                    note += ` (Fee: ${methodInfo.fee}% = $${fee})`;
+                // Check if reached home
+                if (newPathIndex === 6) {
+                    moveTokenToHome(token);
+                    return;
                 }
                 
-                userData.addTransaction('Withdrawn', userData.balanceUSD, note);
+                // Check if moving beyond home
+                if (newPathIndex > 6) {
+                    // Can't move beyond home
+                    return;
+                }
                 
-                // Reset balances
-                userData.watchedAds = 0;
-                userData.balanceUSD = 0;
-                userData.balanceBDT = 0;
-                userData.saveData();
-                
-                // Close dialog and update UI
-                $('#payment-dialog').hide();
-                updateUI();
-                
-                // Show success message
-                alert('Withdrawal request submitted! You will receive your payment within 24 hours.');
-            });
-            
-            $('#cancel-payment').click(function() {
-                $('#payment-dialog').hide();
-            });
-        }
-        
-        // Telegram Bot Integration
-        function sendToTelegramBot(data) {
-            const botToken = config.telegramBot.token;
-            const chatId = config.telegramBot.chatId;
-            
-            const message = `🔄 নতুন উত্তোলনের আবেদন\n\n` +
-                           `👤 ব্যবহারকারী: ${data.username}\n` +
-                           `💰 পরিমাণ: $${data.amount}\n` +
-                           `📱 পদ্ধতি: ${data.method}\n` +
-                           `💸 ফি: ${data.fee}%\n` +
-                           `🔢 অ্যাকাউন্ট: ${data.account}\n` +
-                           `⏰ তারিখ: ${data.date}\n\n` +
-                           `✅ দয়া করে 24 ঘন্টার মধ্যে প্রসেস করুন`;
-            
-            // Telegram Bot API ব্যবহার করে মেসেজ পাঠান
-            fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: message,
-                    parse_mode: 'HTML'
-                })
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Message sent to Telegram:', data);
-            })
-            .catch(error => {
-                console.error('Error sending to Telegram:', error);
-                // Fallback: যদি fetch কাজ না করে
-                const img = new Image();
-                img.src = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`;
-            });
-        }
-        
-        // Event handlers
-        $('#watch-ad-btn').click(function() {
-            showLoading(true);
-            
-            // Show Monetag ad
-            show_9050013().then(() => {
-                // Ad watched successfully
-                userData.watchedAds++;
-                userData.balanceUSD += config.earningsPerAd.usd;
-                userData.balanceBDT += config.earningsPerAd.bdt;
-                
-                userData.addTransaction('Earned', config.earningsPerAd.usd);
-                userData.saveData();
-                
-                updateUI();
-                
-                // Show success message
-                $('<div class="notice notice-success">Success! You earned $' + 
-                  config.earningsPerAd.usd.toFixed(4) + '</div>')
-                    .insertAfter('#ad-loading')
-                    .delay(3000)
-                    .fadeOut(500, function() { $(this).remove(); });
-            }).catch(error => {
-                console.error('Ad error:', error);
-                
-                // Show error message
-                $('<div class="notice notice-error">Ad failed to load. Please try again.</div>')
-                    .insertAfter('#ad-loading')
-                    .delay(3000)
-                    .fadeOut(500, function() { $(this).remove(); });
-            }).finally(() => {
-                showLoading(false);
-            });
-        });
-        
-        $('#withdraw-btn').click(function() {
-            if (userData.balanceUSD >= config.withdrawalThreshold) {
-                $('#payment-details').val('');
-                $('.payment-option').removeClass('selected');
-                userData.selectedPaymentMethod = null;
-                $('#payment-dialog').show();
+                // Move along home stretch
+                moveTokenInHomeStretch(token, newPathIndex);
+                return;
             }
-        });
+        }
         
-        $('#transaction-btn').click(function() {
-            $('#transaction-history').slideToggle();
-        });
+        // Move token from base to start
+        function moveTokenToStart(token) {
+            // Find start cell for this color
+            let startCell;
+            
+            if (token.element.dataset.color === 'red') {
+                startCell = document.querySelector('[data-path="red"][data-path-index="0"]');
+            } else if (token.element.dataset.color === 'green') {
+                startCell = document.querySelector('[data-path="green"][data-path-index="0"]');
+            } else if (token.element.dataset.color === 'yellow') {
+                startCell = document.querySelector('[data-path="yellow"][data-path-index="0"]');
+            } else if (token.element.dataset.color === 'blue') {
+                startCell = document.querySelector('[data-path="blue"][data-path-index="0"]');
+            }
+            
+            // Move token to start cell
+            startCell.appendChild(token.element);
+            token.position = 'path';
+            token.pathIndex = 0;
+            
+            if (soundEnabled) playSound('move');
+        }
         
-        // Initialize payment methods
-        setupPaymentMethods();
+        // Move token along path
+        function moveTokenAlongPath(token, newPathIndex) {
+            // Check for opponent tokens to capture
+            const currentPathCell = document.querySelector(
+                `[data-path="${token.element.dataset.color}"][data-path-index="${token.pathIndex}"]`
+            );
+            
+            const newPathCell = document.querySelector(
+                `[data-path="${token.element.dataset.color}"][data-path-index="${newPathIndex}"]`
+            );
+            
+            // Check if new cell has opponent tokens
+            const opponentTokens = Array.from(newPathCell.children).filter(
+                child => child.classList.contains('token') && 
+                       !child.classList.contains(token.element.dataset.color) &&
+                       !newPathCell.classList.contains('safe-cell')
+            );
+            
+            // Send opponent tokens back to base
+            opponentTokens.forEach(opponentToken => {
+                const opponentColor = opponentToken.dataset.color;
+                const opponentIndex = parseInt(opponentToken.dataset.index);
+                const opponentData = players[opponentColor].tokens[opponentIndex];
+                
+                // Find home cell for this token
+                const homeCells = document.querySelectorAll(`[data-home="${opponentColor}"]`);
+                const homeCell = homeCells[opponentIndex];
+                
+                // Move token back to base
+                homeCell.appendChild(opponentToken);
+                opponentData.position = 'base';
+                opponentData.pathIndex = -1;
+                
+                if (soundEnabled) playSound('capture');
+            });
+            
+            // Move token to new cell
+            newPathCell.appendChild(token.element);
+            token.pathIndex = newPathIndex;
+            
+            if (soundEnabled) playSound('move');
+        }
+        
+        // Move token to home stretch
+        function moveTokenToHomeStretch(token) {
+            // Find home stretch start cell for this color
+            let homeStretchCell;
+            
+            if (token.element.dataset.color === 'red') {
+                homeStretchCell = document.querySelector('[data-path="red"][data-path-index="51"]');
+            } else if (token.element.dataset.color === 'green') {
+                homeStretchCell = document.querySelector('[data-path="green"][data-path-index="51"]');
+            } else if (token.element.dataset.color === 'yellow') {
+                homeStretchCell = document.querySelector('[data-path="yellow"][data-path-index="51"]');
+            } else if (token.element.dataset.color === 'blue') {
+                homeStretchCell = document.querySelector('[data-path="blue"][data-path-index="51"]');
+            }
+            
+            // Move token to home stretch
+            homeStretchCell.appendChild(token.element);
+            token.position = 'home-stretch';
+            token.pathIndex = 0;
+            
+            if (soundEnabled) playSound('move');
+        }
+        
+        // Move token in home stretch
+        function moveTokenInHomeStretch(token, newPathIndex) {
+            // Find home stretch cell for this index and color
+            let homeStretchCell;
+            
+            if (token.element.dataset.color === 'red') {
+                homeStretchCell = document.querySelector(`[data-path="red"][data-path-index="${51 + newPathIndex}"]`);
+            } else if (token.element.dataset.color === 'green') {
+                homeStretchCell = document.querySelector(`[data-path="green"][data-path-index="${51 + newPathIndex}"]`);
+            } else if (token.element.dataset.color === 'yellow') {
+                homeStretchCell = document.querySelector(`[data-path="yellow"][data-path-index="${51 + newPathIndex}"]`);
+            } else if (token.element.dataset.color === 'blue') {
+                homeStretchCell = document.querySelector(`[data-path="blue"][data-path-index="${51 + newPathIndex}"]`);
+            }
+            
+            // Move token to new home stretch position
+            homeStretchCell.appendChild(token.element);
+            token.pathIndex = newPathIndex;
+            
+            if (soundEnabled) playSound('move');
+        }
+        
+        // Move token to home
+        function moveTokenToHome(token) {
+            const color = token.element.dataset.color;
+            const index = players[color].homeCount;
+            
+            // Find home cell for this token
+            const homeCells = document.querySelectorAll(`[data-home="${color}"]`);
+            const homeCell = homeCells[index];
+            
+            // Move token to home
+            homeCell.appendChild(token.element);
+            token.position = 'home';
+            token.pathIndex = -1;
+            players[color].homeCount++;
+            
+            // Check for win
+            if (players[color].homeCount === 4) {
+                setTimeout(() => {
+                    alert(`${color.toUpperCase()} player wins!`);
+                    resetGame();
+                    homeScreen.classList.add('active');
+                    gameContainer.classList.remove('active');
+                }, 500);
+            }
+            
+            if (soundEnabled) playSound('home');
+        }
+        
+        // Move to next player
+        function nextPlayer() {
+            const playerOrder = ['red', 'green', 'yellow', 'blue'];
+            const currentIndex = playerOrder.indexOf(currentPlayer);
+            const nextIndex = (currentIndex + 1) % 4;
+            currentPlayer = playerOrder[nextIndex];
+            
+            // Update UI
+            playerTurnDisplay.textContent = currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1);
+            
+            switch (currentPlayer) {
+                case 'red':
+                    playerTurnDisplay.style.color = '#fa5252';
+                    break;
+                case 'green':
+                    playerTurnDisplay.style.color = '#40c057';
+                    break;
+                case 'yellow':
+                    playerTurnDisplay.style.color = '#fab005';
+                    break;
+                case 'blue':
+                    playerTurnDisplay.style.color = '#339af0';
+                    break;
+            }
+            
+            // Reset dice
+            diceValue = 0;
+            diceValueDisplay.textContent = '0';
+            
+            // If single player mode, let AI play
+            if (currentPlayer !== 'red') {
+                setTimeout(() => {
+                    aiPlay();
+                }, 1000);
+            }
+        }
+        
+        // AI player logic
+        function aiPlay() {
+            // Roll dice
+            diceValue = Math.floor(Math.random() * 6) + 1;
+            diceValueDisplay.textContent = diceValue;
+            rollsCount++;
+            rollsCountDisplay.textContent = rollsCount;
+            
+            if (soundEnabled) playSound('dice');
+            
+            // Find movable tokens
+            const movableTokens = players[currentPlayer].tokens.filter(canMoveToken);
+            
+            if (movableTokens.length === 0) {
+                if (diceValue !== 6) {
+                    setTimeout(() => {
+                        nextPlayer();
+                    }, 1000);
+                } else {
+                    // If rolled a 6 but no moves, try again
+                    setTimeout(() => {
+                        aiPlay();
+                    }, 1000);
+                }
+                return;
+            }
+            
+            // Choose a random movable token
+            const randomIndex = Math.floor(Math.random() * movableTokens.length);
+            const tokenToMove = movableTokens[randomIndex];
+            
+            // Move the token after a delay
+            setTimeout(() => {
+                moveToken(tokenToMove);
+                
+                // If not a 6, move to next player
+                if (diceValue !== 6) {
+                    setTimeout(() => {
+                        nextPlayer();
+                    }, 1000);
+                } else {
+                    // If rolled a 6, play again
+                    setTimeout(() => {
+                        aiPlay();
+                    }, 1000);
+                }
+            }, 1000);
+        }
+        
+        // Reset the game
+        function resetGame() {
+            gameStarted = false;
+            currentPlayer = 'red';
+            playerTurnDisplay.textContent = 'Red';
+            playerTurnDisplay.style.color = '#fa5252';
+            diceValue = 0;
+            diceValueDisplay.textContent = '0';
+            rollsCount = 0;
+            rollsCountDisplay.textContent = '0';
+            
+            // Reset players
+            players = {
+                red: { tokens: [], homeCount: 0 },
+                green: { tokens: [], homeCount: 0 },
+                yellow: { tokens: [], homeCount: 0 },
+                blue: { tokens: [], homeCount: 0 }
+            };
+            
+            // Recreate board and tokens
+            createBoard();
+            initializeTokens();
+        }
+        
+        // Play sound
+        function playSound(type) {
+            if (!soundEnabled) return;
+            
+            // In a real implementation, you would play actual sound files
+            console.log(`Playing ${type} sound`);
+        }
+        
+        // Initialize the game when page loads
+        window.addEventListener('DOMContentLoaded', initGame);
     </script>
 </body>
 </html>
